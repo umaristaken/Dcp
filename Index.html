@@ -103,4 +103,230 @@
         <!-- TOP NAV HEADER -->
         <nav class="bg-[#111b21] sticky top-0 z-40 px-4 py-3 border-b border-[#222d34] flex flex-col items-center justify-center shadow-sm">
             <h1 class="text-white font-extrabold text-xl tracking-wide">DCP Confession page</h1>
-            <span id="user-display-name" class="text-[11px] text-
+            <span id="user-display-name" class="text-[11px] text-gray-400 font-semibold">User: Guest</span>
+        </nav>
+
+        <!-- CHAT MESSAGES CONTAINER -->
+        <div class="flex-1 max-w-md w-full mx-auto px-4 pt-4 pb-36 overflow-y-auto">
+            <div id="chat-stream" class="space-y-4">
+                <div class="text-center py-8 text-gray-400 text-sm">Loading group chat...</div>
+            </div>
+        </div>
+
+        <!-- FIXED INPUT & BOTTOM NAV -->
+        <div class="fixed bottom-0 left-0 right-0 z-50 bg-[#111b21] border-t border-[#222d34]">
+            
+            <!-- Input Box -->
+            <div class="max-w-md mx-auto px-3 py-2 flex items-center gap-2">
+                <div class="flex-1 bg-gray-800 border border-gray-600 rounded-2xl px-4 py-2.5 flex items-center">
+                    <input id="chat-input" type="text" placeholder="Message..." class="w-full bg-transparent text-base text-white focus:outline-none placeholder-gray-400">
+                </div>
+                <button id="btn-send" onclick="sendMessage()" class="bg-white text-black px-4 py-2.5 rounded-2xl font-bold hover:bg-gray-200 transition">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <!-- Bottom 5-Box Navigation -->
+            <div class="bottom-nav border-t border-[#222d34]">
+                <div class="max-w-md mx-auto grid grid-cols-5 text-center text-white font-bold text-xs">
+                    <button onclick="openModal('me-modal')" class="py-2 border-r border-[#222d34] hover:bg-gray-800">Me</button>
+                    <button onclick="openModal('personal-modal')" class="py-2 border-r border-[#222d34] hover:bg-gray-800">Personal</button>
+                    <button class="py-2 border-r border-[#222d34] flex flex-col items-center justify-center">
+                        <div class="flex items-center space-x-1">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            <span id="active-user-count" class="text-xs">1</span>
+                        </div>
+                        <span class="text-[9px] text-gray-400 font-normal">Active</span>
+                    </button>
+                    <button onclick="openModal('settings-modal')" class="py-2 border-r border-[#222d34] hover:bg-gray-800">Setting</button>
+                    <button onclick="openModal('notice-modal')" class="py-2 hover:bg-gray-800">Notice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL POPUPS -->
+    <div id="me-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-5 w-full max-w-xs text-center relative">
+            <button onclick="closeModal('me-modal')" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-user text-blue-400 mr-2"></i>My Profile</h3>
+            <p id="profile-info-text" class="text-sm text-gray-300">Loading profile...</p>
+        </div>
+    </div>
+
+    <div id="notice-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-5 w-full max-w-xs text-center relative">
+            <button onclick="closeModal('notice-modal')" class="absolute top-3 right-3 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-bullhorn text-yellow-400 mr-2"></i>Notice</h3>
+            <p class="text-xs text-gray-300">Keep conversations respectful. Fake names will result in a permanent ban.</p>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // IMPORTANT: Replace with your Firebase Project Keys
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+        let selectedGender = 'Male';
+        let userRealName = '';
+        let userAge = '18';
+
+        window.loginWithGoogle = async () => {
+            document.getElementById('status-msg').classList.remove('hidden');
+            try {
+                const result = await signInWithPopup(auth, provider);
+                currentUser = result.user;
+                showScreen('screen-gender-age');
+            } catch (error) {
+                alert("Login Error: " + error.message);
+                document.getElementById('status-msg').classList.add('hidden');
+            }
+        };
+
+        window.selectGender = (gender) => {
+            selectedGender = gender;
+            document.getElementById('gender-male').classList.toggle('border-white', gender === 'Male');
+            document.getElementById('gender-female').classList.toggle('border-white', gender === 'Female');
+        };
+
+        window.goToScreen3 = () => {
+            userAge = document.getElementById('age-range').value;
+            showScreen('screen-name');
+        };
+
+        window.finishOnboarding = () => {
+            const nameInput = document.getElementById('real-name-input').value.trim();
+            if (!nameInput) {
+                alert("Please enter your real name to proceed!");
+                return;
+            }
+            userRealName = nameInput;
+            document.getElementById('user-display-name').innerText = `User: ${userRealName} (${selectedGender}, ${userAge})`;
+            
+            showScreen('screen-chat');
+            loadChatMessages();
+        };
+
+        window.sendMessage = async () => {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            input.value = '';
+
+            try {
+                await addDoc(collection(db, "messages"), {
+                    text: message,
+                    senderName: userRealName,
+                    senderUid: currentUser.uid,
+                    gender: selectedGender,
+                    age: userAge,
+                    reactions: { heart: 0, laugh: 0, like: 0, wow: 0, angry: 0 },
+                    timestamp: serverTimestamp()
+                });
+            } catch (err) {
+                console.error("Error sending message:", err);
+            }
+        };
+
+        // Reaction Handler Function
+        window.reactToMsg = async (msgId, reactionType) => {
+            try {
+                const msgRef = doc(db, "messages", msgId);
+                await updateDoc(msgRef, {
+                    [`reactions.${reactionType}`]: increment(1)
+                });
+            } catch (err) {
+                console.error("Error updating reaction:", err);
+            }
+        };
+
+        function loadChatMessages() {
+            const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatStream = document.getElementById('chat-stream');
+                chatStream.innerHTML = '';
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const isMe = data.senderUid === currentUser?.uid;
+                    const rx = data.reactions || { heart: 0, laugh: 0, like: 0, wow: 0, angry: 0 };
+
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+
+                    msgDiv.innerHTML = `
+                        <div class="text-[10px] text-gray-400 mb-0.5 px-1">
+                            ${data.senderName} (${data.gender}, ${data.age})
+                        </div>
+                        <div class="px-3 py-2 text-sm max-w-[85%] ${isMe ? 'chat-bubble-me' : 'chat-bubble-other'} relative">
+                            <div>${data.text}</div>
+                            
+                            <!-- EMOJI REACTION BUTTONS -->
+                            <div class="flex items-center gap-2 mt-2 pt-1 border-t border-gray-600/40 text-xs">
+                                <button onclick="reactToMsg('${docSnap.id}', 'heart')" class="hover:scale-125 transition">❤️ ${rx.heart || 0}</button>
+                                <button onclick="reactToMsg('${docSnap.id}', 'laugh')" class="hover:scale-125 transition">😂 ${rx.laugh || 0}</button>
+                                <button onclick="reactToMsg('${docSnap.id}', 'like')" class="hover:scale-125 transition">👍 ${rx.like || 0}</button>
+                                <button onclick="reactToMsg('${docSnap.id}', 'wow')" class="hover:scale-125 transition">😮 ${rx.wow || 0}</button>
+                                <button onclick="reactToMsg('${docSnap.id}', 'angry')" class="hover:scale-125 transition">😡 ${rx.angry || 0}</button>
+                                ${isMe ? `<button onclick="deleteMsg('${docSnap.id}')" class="ml-auto text-red-300 hover:text-red-100"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    chatStream.appendChild(msgDiv);
+                });
+
+                chatStream.scrollTop = chatStream.scrollHeight;
+            });
+        }
+
+        window.deleteMsg = async (id) => {
+            if (confirm("Delete this message?")) {
+                await deleteDoc(doc(db, "messages", id));
+            }
+        };
+
+        function showScreen(screenId) {
+            ['screen-login', 'screen-gender-age', 'screen-name', 'screen-chat'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        window.openModal = (id) => {
+            if (id === 'me-modal') {
+                document.getElementById('profile-info-text').innerHTML = `
+                    <b>Name:</b> ${userRealName || 'N/A'}<br>
+                    <b>Gender:</b> ${selectedGender}<br>
+                    <b>Age:</b> ${userAge}<br>
+                    <b>Email:</b> ${currentUser ? currentUser.email : 'N/A'}
+                `;
+            }
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.add('hidden');
+        };
+    </script>
+</body>
+                                                                                    </html>
+                                                           
