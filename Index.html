@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCP Confession</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #0b141a;
+            color: #e9edef;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .chat-bg {
+            background-color: #0b141a;
+        }
+        .chat-bubble-me {
+            background-color: #005c4b;
+            color: #ffffff;
+            border-radius: 8px 0px 8px 8px;
+        }
+        .chat-bubble-other {
+            background-color: #202c33;
+            color: #ffffff;
+            border-radius: 0px 8px 8px 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between chat-bg text-gray-100">
+
+    <!-- SCREEN 1: LOGIN -->
+    <div id="screen-login" class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-md mx-auto w-full">
+        <div class="w-20 h-20 bg-white text-black rounded-full flex items-center justify-center font-bold text-3xl shadow-lg mb-6 border-2 border-black">
+            D
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2">Welcome to DCP Confessions</h2>
+        <p class="text-sm text-gray-400 mb-8">Sign in with Google to join the community chat.</p>
+
+        <button id="btn-login" onclick="loginWithGoogle()" class="w-full bg-white text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition shadow-sm">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span>Sign in with Google</span>
+        </button>
+        <p id="status-msg" class="text-xs text-blue-400 mt-3 hidden">Logging in...</p>
+    </div>
+
+    <!-- SCREEN 2: GENDER & AGE -->
+    <div id="screen-gender-age" class="flex-1 flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
+        <h2 class="text-xl font-bold text-white mb-6 text-center">What is your gender?</h2>
+        
+        <div class="grid grid-cols-2 gap-4 w-full mb-8">
+            <button type="button" onclick="selectGender('Male')" id="gender-male" class="border-2 border-gray-600 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-gray-800 transition">
+                <i class="fa-solid fa-mars text-4xl text-blue-400 mb-2"></i>
+                <span class="font-bold text-white">Male</span>
+            </button>
+            <button type="button" onclick="selectGender('Female')" id="gender-female" class="border-2 border-gray-600 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-gray-800 transition">
+                <i class="fa-solid fa-venus text-4xl text-pink-400 mb-2"></i>
+                <span class="font-bold text-white">Female</span>
+            </button>
+        </div>
+
+        <div class="w-full mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-semibold text-gray-300">Set your age:</label>
+                <span id="age-value" class="text-lg font-bold text-white">18 yrs</span>
+            </div>
+            <input id="age-range" type="range" min="13" max="80" value="18" oninput="document.getElementById('age-value').innerText = this.value + ' yrs'" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-white">
+        </div>
+
+        <button onclick="goToScreen3()" class="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition">
+            Next Step <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+
+    <!-- SCREEN 3: REAL NAME WARNING -->
+    <div id="screen-name" class="flex-1 flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
+        <h2 class="text-xl font-bold text-white mb-2 text-center">What is your real name?</h2>
+        
+        <div class="w-full mb-6">
+            <p class="text-xs font-bold text-red-400 bg-red-950/60 border border-red-500 p-3 rounded-xl mb-6 text-center">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Take your real name otherwise you will get banned
+            </p>
+            <input id="real-name-input" type="text" placeholder="Enter your full real name..." class="w-full bg-gray-800 border border-gray-600 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white">
+        </div>
+
+        <button onclick="finishOnboarding()" class="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition">
+            Continue to Chat <i class="fa-solid fa-check ml-2"></i>
+        </button>
+    </div>
+
+    <!-- SCREEN 4: CHAT INTERFACE -->
+    <div id="screen-chat" class="flex-1 flex flex-col w-full hidden">
+        
+        <!-- TOP NAV HEADER -->
+        <nav class="bg-[#111b21] sticky top-0 z-40 px-4 py-3 border-b border-[#222d34] flex flex-col items-center justify-center shadow-sm">
+            <h1 class="text-white font-extrabold text-xl tracking-wide">DCP Confession page</h1>
+            <span id="user-display-name" class="text-[11px] text-
