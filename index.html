@@ -1,110 +1,149 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DCP Confession</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body{background:#0b141a;color:#e9edef;font-family:Arial,sans-serif}
-.chat-bubble-me{background:#005c4b;color:white;border-radius:8px 0 8px 8px}
-.chat-bubble-other{background:#202c33;color:white;border-radius:0 8px 8px 8px}
+*{box-sizing:border-box}
+body{margin:0;background:#080d11;color:#e9edef;font-family:Arial,sans-serif}
+.hidden{display:none!important}
+header,footer{background:#111b21}
+.chat-bubble-me{background:#005c4b;border-radius:12px 3px 12px 12px}
+.chat-bubble-other{background:#202c33;border-radius:3px 12px 12px 12px}
+.doodle{background-image:radial-gradient(#26343b 1px,transparent 1px);background-size:22px 22px}
+.navbtn{font-size:11px;padding:12px 2px;color:#cbd5e1}
+.navbtn i{display:block;font-size:17px;margin-bottom:5px}
+.navbtn.active{color:#67e8a5}
+.panel{background:#17232c;border:1px solid #34434c;border-radius:16px;padding:16px}
+.action{background:#e9edef;color:#101820;padding:10px 14px;border-radius:10px;font-weight:700}
+.darkinput{width:100%;background:#202c33;padding:12px;border-radius:10px;color:white}
 </style>
 </head>
-<body class="min-h-screen flex flex-col chat-bg text-gray-100">
+<body>
 
-<section id="screen-login" class="min-h-screen flex flex-col items-center justify-center p-6 text-center max-w-md mx-auto w-full">
-<div class="w-20 h-20 bg-white text-black rounded-full flex items-center justify-center font-bold text-3xl mb-6">D</div>
-<h2 class="text-2xl font-bold mb-2">Welcome to DCP Confessions</h2>
-<p class="text-sm text-gray-400 mb-8">Sign in with Google to join the community chat.</p>
-<button id="btn-login" onclick="loginWithGoogle()" class="w-full bg-white text-black font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-3">
-<i class="fa-brands fa-google"></i> Sign in with Google
-</button>
-<p id="status-msg" class="text-xs text-blue-400 mt-3 hidden">Logging in...</p>
-<p id="login-error" class="text-sm text-red-300 mt-3 hidden"></p>
+<section id="screen-login" class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+<div class="w-20 h-20 rounded-full bg-white text-black flex items-center justify-center text-4xl font-bold mb-5">D</div>
+<h1 class="text-2xl font-bold mb-2">Welcome to DCP Confessions</h1>
+<p class="text-gray-400 mb-6">Sign in with Google to join the community chat.</p>
+<button onclick="login()" class="action w-full max-w-sm"><i class="fa-brands fa-google mr-2"></i>Sign in with Google</button>
+<p id="login-error" class="text-red-300 text-sm mt-4"></p>
 </section>
 
-<section id="screen-gender-age" class="min-h-screen flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
-<h2 class="text-xl font-bold mb-6">What is your gender?</h2>
-<div class="grid grid-cols-2 gap-4 w-full mb-8">
-<button onclick="selectGender('Male')" id="gender-male" class="border-2 border-white rounded-2xl p-5"><i class="fa-solid fa-mars text-3xl text-blue-400"></i><br>Male</button>
-<button onclick="selectGender('Female')" id="gender-female" class="border-2 border-gray-600 rounded-2xl p-5"><i class="fa-solid fa-venus text-3xl text-pink-400"></i><br>Female</button>
-</div>
-<div class="w-full mb-8">
-<label for="age-range">Your age: <span id="age-value">18 yrs</span></label>
-<input id="age-range" type="range" min="13" max="80" value="18" oninput="document.getElementById('age-value').innerText=this.value+' yrs'" class="w-full">
-</div>
-<button onclick="goToScreen3()" class="w-full bg-white text-black font-bold py-3 rounded-xl">Next Step →</button>
+<section id="screen-profile" class="hidden min-h-screen max-w-md mx-auto p-6 flex-col justify-center">
+<h2 class="text-2xl font-bold mb-5">Set up your profile</h2>
+<label class="block mb-2">Gender</label>
+<select id="gender" class="darkinput mb-4"><option>Male</option><option>Female</option></select>
+<label class="block mb-2">Age: <span id="age-label">18</span></label>
+<input id="age" type="range" min="13" max="80" value="18" class="w-full mb-5" oninput="document.getElementById('age-label').textContent=this.value">
+<label class="block mb-2">Display name</label>
+<input id="display-name" maxlength="40" class="darkinput mb-5" placeholder="Choose a display name">
+<button onclick="finishProfile()" class="action w-full">Continue to chat</button>
 </section>
 
-<section id="screen-name" class="min-h-screen flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full hidden">
-<h2 class="text-xl font-bold mb-4">Choose a display name</h2>
-<p class="text-sm text-gray-300 bg-gray-800 p-3 rounded-xl mb-5">Use a respectful display name. Avoid sharing private information in public chat.</p>
-<input id="real-name-input" maxlength="40" placeholder="Enter a display name..." class="w-full bg-gray-800 border border-gray-600 rounded-xl px-4 py-3 mb-6">
-<button onclick="finishOnboarding()" class="w-full bg-white text-black font-bold py-3 rounded-xl">Continue to Chat</button>
-</section>
-
-<section id="screen-chat" class="min-h-screen flex flex-col hidden">
-<header class="bg-[#111b21] p-4 text-center border-b border-gray-700">
-<h1 class="font-extrabold text-xl">DCP Confession page</h1>
-<span id="user-display-name" class="text-xs text-gray-400">User: Guest</span>
+<section id="screen-app" class="hidden min-h-screen flex-col">
+<header class="text-center p-4 border-b border-gray-700">
+<h1 class="text-xl font-bold">DCP Confession</h1>
+<p class="text-xs text-gray-400 mt-1">Developer: Default · Operator: Glitchy</p>
+<p id="user-label" class="text-xs text-gray-400 mt-2"></p>
 </header>
-<main class="flex-1 max-w-md w-full mx-auto p-4 pb-36">
-<div id="chat-stream" class="space-y-4">Loading group chat...</div>
+
+<main id="page-home" class="doodle flex-1 max-w-2xl w-full mx-auto p-4 pb-36">
+<div id="chat-stream" class="space-y-4"><p class="text-center text-gray-400">Loading chat...</p></div>
 </main>
-<footer class="fixed bottom-0 left-0 right-0 bg-[#111b21] border-t border-gray-700">
-<div class="max-w-md mx-auto p-3 flex gap-2">
-<input id="chat-input" maxlength="1000" placeholder="Message..." class="flex-1 min-w-0 bg-gray-800 rounded-xl px-4 py-3">
-<button onclick="sendMessage()" class="bg-white text-black px-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
+
+<main id="page-voting" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-trophy mr-2"></i>Voting Battle</h2>
+<div class="panel">
+<p class="mb-3">Voting Battle UI</p>
+<p class="text-sm text-gray-300">The real shared battle needs server-side round timing, participant limits and score validation.</p>
+<p class="text-sm text-gray-400 mt-3">Schedule: 6:00 AM – 12:00 AM Pakistan time</p>
 </div>
-<div class="max-w-md mx-auto grid grid-cols-5 text-center text-xs">
-<button onclick="openModal('me-modal')" class="py-3">Me</button>
-<button onclick="openModal('personal-modal')" class="py-3">Personal</button>
-<button class="py-3"><span class="text-green-400">●</span> Active</button>
-<button onclick="openModal('settings-modal')" class="py-3">Setting</button>
-<button onclick="openModal('notice-modal')" class="py-3">Notice</button>
+</main>
+
+<main id="page-coins" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-coins mr-2"></i>DCP Coins</h2>
+<div class="panel mb-4">
+<p class="text-gray-400 text-sm">Demo balance on this device</p>
+<p class="text-3xl font-bold mt-1"><span id="coin-balance">0</span> D Coins</p>
+<p class="text-xs text-yellow-300 mt-2">Demo only — not a secure shared balance.</p>
+</div>
+<div class="panel mb-4">
+<h3 class="font-bold mb-3">Get Coins · Mini Games</h3>
+<button class="action w-full mb-3" onclick="spin()">🎡 Spin & Win (demo)</button>
+<button class="action w-full mb-3" onclick="tapGame()">👆 Tap Challenge (demo)</button>
+<button class="action w-full mb-3" onclick="memoryGame()">🧠 Memory Match (demo)</button>
+<button class="action w-full" onclick="quizGame()">❓ Quiz Time (demo)</button>
+<p id="game-result" class="text-sm mt-3 text-green-300"></p>
+</div>
+<div class="panel">
+<h3 class="font-bold mb-3">Avatar Shop</h3>
+<div id="avatar-shop" class="grid grid-cols-2 gap-3"></div>
+<p class="text-xs text-gray-400 mt-3">Purchases here are local demos, not secure shared purchases.</p>
+</div>
+</main>
+
+<main id="page-notice" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4">Notice</h2>
+<div class="panel">Keep conversations respectful. Do not share passwords, addresses, or other private information in public chat.</div>
+</main>
+
+<main id="page-personal" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4">Personal</h2>
+<div class="panel space-y-4">
+<p><i class="fa-brands fa-snapchat text-yellow-300 text-xl mr-3"></i>@callmedefaul</p>
+<p><i class="fa-brands fa-snapchat text-yellow-300 text-xl mr-3"></i>callmeglitchy</p>
+</div>
+</main>
+
+<main id="page-settings" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4">Settings</h2>
+<div class="panel">
+<label class="flex items-center justify-between gap-3">
+<span>Show my display name in chat</span>
+<input type="checkbox" id="show-name" onchange="saveSettings()">
+</label>
+<p class="text-xs text-gray-400 mt-3">When off, other people see “Anonymous”.</p>
+<hr class="border-gray-700 my-4">
+<p id="settings-email" class="text-sm break-all mb-4"></p>
+<button class="action" onclick="logout()">Sign out</button>
+</div>
+</main>
+
+<main id="page-me" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
+<h2 class="text-xl font-bold mb-4">My Profile</h2>
+<div class="panel">
+<div class="text-5xl mb-3">👤</div>
+<p id="me-name" class="mb-2"></p>
+<p id="me-age" class="text-sm text-gray-400 mb-4"></p>
+<button class="action" onclick="showPage('coins')">View Coins</button>
+</div>
+</main>
+
+<footer class="fixed bottom-0 left-0 right-0 border-t border-gray-700">
+<div class="max-w-2xl mx-auto grid grid-cols-7 text-center">
+<button class="navbtn" data-page="voting" onclick="showPage('voting')"><i class="fa-solid fa-trophy"></i>Voting</button>
+<button class="navbtn" data-page="coins" onclick="showPage('coins')"><i class="fa-solid fa-coins"></i>Coins</button>
+<button class="navbtn" data-page="notice" onclick="showPage('notice')"><i class="fa-solid fa-bell"></i>Notice</button>
+<button class="navbtn active" data-page="home" onclick="showPage('home')"><i class="fa-solid fa-house"></i>Home</button>
+<button class="navbtn" data-page="personal" onclick="showPage('personal')"><i class="fa-solid fa-user-group"></i>Personal</button>
+<button class="navbtn" data-page="settings" onclick="showPage('settings')"><i class="fa-solid fa-gear"></i>Settings</button>
+<button class="navbtn" data-page="me" onclick="showPage('me')"><i class="fa-solid fa-user"></i>Me</button>
+</div>
+<div id="chat-composer" class="max-w-2xl mx-auto p-2 flex gap-2">
+<input id="chat-input" maxlength="1000" class="darkinput flex-1 min-w-0" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMessage()">
+<button onclick="sendMessage()" class="action"><i class="fa-solid fa-paper-plane"></i></button>
 </div>
 </footer>
 </section>
 
-<div id="me-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-<div class="bg-gray-900 rounded-2xl p-5 w-full max-w-xs text-center">
-<h3 class="text-lg font-bold mb-3">My Profile</h3>
-<div id="profile-info-text" class="text-sm text-gray-300"></div>
-<button onclick="closeModal('me-modal')" class="mt-4 bg-white text-black px-4 py-2 rounded-lg">Close</button>
-</div>
-</div>
-
-<div id="personal-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-<div class="bg-gray-900 rounded-2xl p-5 w-full max-w-xs text-center">
-<h3 class="text-lg font-bold mb-3">Personal</h3>
-<p class="text-sm text-gray-300">Your profile details are available in the Me section.</p>
-<button onclick="closeModal('personal-modal')" class="mt-4 bg-white text-black px-4 py-2 rounded-lg">Close</button>
-</div>
-</div>
-
-<div id="settings-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-<div class="bg-gray-900 rounded-2xl p-5 w-full max-w-xs text-center">
-<h3 class="text-lg font-bold mb-3">Settings</h3>
-<p id="settings-email" class="text-sm text-gray-300 break-all mb-4"></p>
-<button onclick="signOutUser()" class="bg-white text-black px-4 py-2 rounded-lg">Sign out</button>
-<button onclick="closeModal('settings-modal')" class="mt-3 block mx-auto text-gray-300">Close</button>
-</div>
-</div>
-
-<div id="notice-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-<div class="bg-gray-900 rounded-2xl p-5 w-full max-w-xs text-center">
-<h3 class="text-lg font-bold mb-3">Notice</h3>
-<p class="text-sm text-gray-300">Keep conversations respectful. Avoid sharing private information in chat.</p>
-<button onclick="closeModal('notice-modal')" class="mt-4 bg-white text-black px-4 py-2 rounded-lg">Close</button>
-</div>
-</div>
-
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {getFirestore,collection,addDoc,onSnapshot,query,orderBy,serverTimestamp,deleteDoc,doc,updateDoc,increment} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {getFirestore,collection,addDoc,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyBeiSuSG4aVY-STxSBhfzsOrk7sWmTrypA",
@@ -120,174 +159,131 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 const provider=new GoogleAuthProvider();
+let user=null,profile={},stopChat=null;
+const $=id=>document.getElementById(id);
 
-let currentUser=null;
-let selectedGender="Male";
-let userRealName="";
-let userAge="18";
-let unsubscribeMessages=null;
+function screen(id){
+ ["screen-login","screen-profile","screen-app"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+}
+window.login=async()=>{
+ $("login-error").textContent="";
+ try{await signInWithPopup(auth,provider)}
+ catch(e){$("login-error").textContent="Login failed: "+(e.message||e.code)}
+};
 
-function showScreen(id){
- ["screen-login","screen-gender-age","screen-name","screen-chat"].forEach(x=>document.getElementById(x).classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
+onAuthStateChanged(auth,async u=>{
+ user=u;
+ if(!u){if(stopChat){stopChat();stopChat=null}screen("screen-login");return}
+ $("settings-email").textContent=u.email||"";
+ const saved=localStorage.getItem("dcp-profile-"+u.uid);
+ if(saved){
+  try{profile=JSON.parse(saved);openApp()}catch{screen("screen-profile")}
+ }else screen("screen-profile");
+});
+
+window.finishProfile=()=>{
+ const name=$("display-name").value.trim();
+ if(!name){alert("Please enter a display name.");return}
+ if(!user){screen("screen-login");return}
+ profile={name:name.slice(0,40),gender:$("gender").value,age:Number($("age").value)};
+ localStorage.setItem("dcp-profile-"+user.uid,JSON.stringify(profile));
+ openApp();
+};
+
+function openApp(){
+ screen("screen-app");
+ $("user-label").textContent="Signed in";
+ $("me-name").textContent="Name: "+(profile.name||"User");
+ $("me-age").textContent=(profile.gender||"")+", "+(profile.age||"")+" years";
+ $("show-name").checked=localStorage.getItem("dcp-show-name-"+user.uid)==="true";
+ updateCoins();renderShop();loadChat();
 }
 
-window.loginWithGoogle=async()=>{
- const status=document.getElementById("status-msg");
- const errorBox=document.getElementById("login-error");
- status.classList.remove("hidden");
- errorBox.classList.add("hidden");
- try{
-  const result=await signInWithPopup(auth,provider);
-  currentUser=result.user;
-  showScreen("screen-gender-age");
- }catch(e){
-  console.error("Firebase login error:",e.code,e.message);
-  errorBox.textContent=`Login failed (${e.code||"unknown"}): ${e.message||"Please try again."}`;
-  errorBox.classList.remove("hidden");
- }finally{
-  status.classList.add("hidden");
- }
-};
+window.saveSettings=()=>localStorage.setItem("dcp-show-name-"+user.uid,$("show-name").checked?"true":"false");
 
-window.selectGender=(gender)=>{
- selectedGender=gender;
- document.getElementById("gender-male").classList.toggle("border-white",gender==="Male");
- document.getElementById("gender-male").classList.toggle("border-gray-600",gender!=="Male");
- document.getElementById("gender-female").classList.toggle("border-white",gender==="Female");
- document.getElementById("gender-female").classList.toggle("border-gray-600",gender!=="Female");
-};
-
-window.goToScreen3=()=>{
- userAge=document.getElementById("age-range").value;
- showScreen("screen-name");
-};
-
-window.finishOnboarding=()=>{
- const input=document.getElementById("real-name-input");
- const name=input.value.trim();
- if(!name){alert("Please enter a display name.");return;}
- if(!currentUser){showScreen("screen-login");return;}
- userRealName=name.slice(0,40);
- document.getElementById("user-display-name").textContent=`User: ${userRealName} (${selectedGender}, ${userAge})`;
- document.getElementById("settings-email").textContent=currentUser.email||"";
- showScreen("screen-chat");
- loadChatMessages();
+window.showPage=name=>{
+ ["home","voting","coins","notice","persoonal","settings","me"].forEach(p=>$("page-"+p).classList.toggle("hidden",p!==name));
+ document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+ $("chat-composer").classList.toggle("hidden",name!=="home");
 };
 
 window.sendMessage=async()=>{
- const input=document.getElementById("chat-input");
- const message=input.value.trim();
- if(!message)return;
- if(!currentUser){alert("Please sign in first.");return;}
+ const input=$("chat-input"),text=input.value.trim();
+ if(!text||!user)return;
  input.value="";
  try{
   await addDoc(collection(db,"messages"),{
-   text:message,
-   senderName:userRealName||"User",
-   senderUid:currentUser.uid,
-   gender:selectedGender,
-   age:Number(userAge),
+   text,senderName:profile.name||"User",senderUid:user.uid,
+   gender:profile.gender||"—",age:Number(profile.age||18),
    reactions:{heart:0,laugh:0,like:0,wow:0,angry:0},
    timestamp:serverTimestamp()
   });
- }catch(e){
-  console.error("Send message error:",e);
-  alert(`Could not send message (${e.code||"error"}). Check Firestore rules.`);
-  input.value=message;
- }
+ }catch(e){input.value=text;alert("Message could not be sent. Please check Firestore Rules.")}
 };
 
-window.reactToMsg=async(id,type)=>{
- if(!["heart","laugh","like","wow","angry"].includes(type))return;
- try{await updateDoc(doc(db,"messages",id),{[`reactions.${type}`]:increment(1)});}
- catch(e){console.error("Reaction error:",e);}
-};
-
-function loadChatMessages(){
- if(unsubscribeMessages)unsubscribeMessages();
+function loadChat(){
+ if(stopChat)stopChat();
  const q=query(collection(db,"messages"),orderBy("timestamp","asc"));
- unsubscribeMessages=onSnapshot(q,snapshot=>{
-  const stream=document.getElementById("chat-stream");
-  stream.replaceChildren();
-  snapshot.forEach(ds=>{
-   const data=ds.data();
-   const mine=data.senderUid===currentUser?.uid;
-   const reactions=data.reactions||{};
+ stopChat=onSnapshot(q,snap=>{
+  const stream=$("chat-stream");stream.replaceChildren();
+  snap.forEach(ds=>{
+   const d=ds.data(),mine=d.senderUid===user.uid;
    const wrap=document.createElement("div");
-   wrap.className=`flex flex-col ${mine?"items-end":"items-start"}`;
-   const sender=document.createElement("div");
-   sender.className="text-[10px] text-gray-400 mb-1";
-   sender.textContent=`${data.senderName||"User"} (${data.gender||"—"}, ${data.age??"—"})`;
+   wrap.className="flex flex-col "+(mine?"items-end":"items-start");
+   const sender=document.createElement("p");
+   sender.className="text-xs text-gray-400 mb-1";
+   sender.textContent=mine?"You":($("show-name").checked?(d.senderName||"User"):"Anonymous");
    const bubble=document.createElement("div");
-   bubble.className=`px-3 py-2 text-sm max-w-[85%] ${mine?"chat-bubble-me":"chat-bubble-other"}`;
-   const message=document.createElement("div");
-   message.className="whitespace-pre-wrap break-words";
-   message.textContent=data.text||"";
-   bubble.appendChild(message);
+   bubble.className="max-w-[90%] px-3 py-3 "+(mine?"chat-bubble-me":"chat-bubble-other");
+   const msg=document.createElement("p");
+   msg.className="whitespace-pre-wrap break-words";
+   msg.textContent=d.text||"";
+   bubble.appendChild(msg);
    const row=document.createElement("div");
-   row.className="flex flex-wrap items-center gap-2 mt-2 pt-1 border-t border-gray-600/40 text-xs";
+   row.className="flex gap-3 text-xs mt-3 pt-2 border-t border-white/10";
+   const reactions=d.reactions||{};
    [["heart","❤️"],["laugh","😂"],["like","👍"],["wow","😮"],["angry","😡"]].forEach(([type,emoji])=>{
     const b=document.createElement("button");
-    b.textContent=`${emoji} ${Number(reactions[type]||0)}`;
-    b.onclick=()=>window.reactToMsg(ds.id,type);
+    const key="dcp-react-"+user.uid+"-"+ds.id+"-"+type;
+    const used=localStorage.getItem(key)==="1";
+    b.textContent=emoji+" "+Number(reactions[type]||0);
+    b.title=used?"Already reacted on this device":"Reaction";
+    b.onclick=()=>alert("Reaction saving needs matching secure Firestore rules. Repeated-count bug is not safely fixed by client-only code.");
     row.appendChild(b);
    });
-   if(mine){
-    const del=document.createElement("button");
-    del.textContent="🗑️";
-    del.onclick=async()=>{
-     if(confirm("Delete this message?")){
-      try{await deleteDoc(doc(db,"messages",ds.id));}
-      catch(e){console.error("Delete error:",e);alert("Could not delete. Check Firestore rules.");}
-     }
-    };
-    row.appendChild(del);
-   }
-   bubble.appendChild(row);
-   wrap.append(sender,bubble);
-   stream.appendChild(wrap);
+   bubble.appendChild(row);wrap.append(sender,bubble);stream.appendChild(wrap);
   });
-  stream.scrollTop=stream.scrollHeight;
- },error=>{
-  console.error("Chat loading error:",error);
-  document.getElementById("chat-stream").textContent="Unable to load chat. Check Firestore rules and connection.";
- });
+ },e=>{$("chat-stream").textContent="Chat unavailable. Check Firestore Rules and connection."});
 }
 
-window.openModal=(id)=>{
- if(id==="me-modal"){
-  const p=document.getElementById("profile-info-text");
-  p.replaceChildren();
-  [["Name",userRealName||"N/A"],["Gender",selectedGender],["Age",userAge],["Email",currentUser?.email||"N/A"]].forEach(([k,v])=>{
-   const line=document.createElement("p");
-   line.textContent=`${k}: ${v}`;
-   p.appendChild(line);
-  });
- }
- const modal=document.getElementById(id);
- if(modal)modal.classList.remove("hidden");
-};
-window.closeModal=id=>document.getElementById(id)?.classList.add("hidden");
+function updateCoins(){
+ $("coin-balance").textContent=localStorage.getItem("dcp-demo-coins-"+user.uid)||"0";
+}
+function addDemoCoins(n){
+ const k="dcp-demo-coins-"+user.uid;
+ localStorage.setItem(k,String(Number(localStorage.getItem(k)||0)+n));
+ updateCoins();
+}
+window.spin=()=>{const n=[10,20,30,50][Math.floor(Math.random()*4)];addDemoCoins(n);$("game-result").textContent="Demo spin reward: "+n+" coins."};
+window.tapGame=()=>{addDemoCoins(10);$("game-result").textContent="Demo tap challenge: +10 coins."};
+window.memoryGame=()=>{addDemoCoins(10);$("game-result").textContent="Demo memory match: +10 coins."};
+window.quizGame=()=>{const answer=prompt("Quiz: Which planet is known as the Red Planet?\nType your answer");if(answer&&answer.trim().toLowerCase()==="mars"){addDemoCoins(15);$("game-result").textContent="Correct! +15 demo coins."}else $("game-result").textContent="Not quite. The answer is Mars."};
 
-window.signOutUser=async()=>{
- try{
-  if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null;}
-  await signOut(auth);
-  currentUser=null;
-  userRealName="";
-  document.getElementById("real-name-input").value="";
-  showScreen("screen-login");
-  closeModal("settings-modal");
- }catch(e){console.error("Sign out error:",e);alert("Could not sign out.");}
-};
-
-onAuthStateChanged(auth,user=>{
- currentUser=user;
- if(user&&document.getElementById("screen-login").classList.contains("hidden")===false){
-  showScreen("screen-gender-age");
+function renderShop(){
+ const shop=$("avatar-shop");shop.replaceChildren();
+ for(let i=1;i<=15;i++){
+  const price=200*i*i;
+  const card=document.createElement("div");card.className="bg-gray-800 rounded-xl p-3 text-center";
+  const icon=document.createElement("div");icon.className="text-3xl mb-2";icon.textContent=["👤","😎","🦊","🐺","🐉","👑","🦁","🌙","⚡","🔥","💎","🦅","🌌","🤖","🏆"][i-1];
+  const label=document.createElement("p");label.className="text-sm mb-2";label.textContent="Avatar "+i;
+  const cost=document.createElement("p");cost.className="text-xs text-gray-300 mb-3";cost.textContent=price.toLocaleString()+" coins";
+  const btn=document.createElement("button");btn.className="action text-xs";btn.textContent="Buy (demo)";
+  btn.onclick=()=>alert("Avatar shop is a visual demo. Secure purchases require a backend.");
+  card.append(icon,label,cost,btn);shop.appendChild(card);
  }
-});
+}
+window.logout=async()=>{if(stopChat){stopChat();stopChat=null}await signOut(auth)};
 </script>
 </body>
 </html>
