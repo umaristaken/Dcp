@@ -15,33 +15,37 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Screen height fixing for Mobile viewports (Android & iOS safe) */
+    /* Screen lock taake mobile browser bottom toolbar ko na dawaye */
     html, body {
+      width: 100%;
       height: 100%;
-      height: 100dvh;
+      overflow: hidden;
       background-color: #000;
       color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
     }
 
+    /* 📌 FIXED INSET: Har mobile screen ke andar 100% lock rahega */
     .app-frame {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       width: 100%;
       max-width: 440px;
+      margin: 0 auto;
       height: 100%;
-      height: 100dvh;
       background: #111b21;
-      position: relative;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     @media (min-width: 640px) {
       .app-frame {
-        height: 94vh;
+        top: 3%;
+        bottom: 3%;
+        height: 94%;
         border-radius: 28px;
         border: 1px solid #222d34;
         box-shadow: 0 20px 40px rgba(0,0,0,0.8);
@@ -54,6 +58,7 @@
       width: 100%;
       height: 100%;
       flex-direction: column;
+      overflow: hidden;
       position: relative;
     }
     .screen.active {
@@ -108,13 +113,13 @@
       cursor: pointer;
     }
 
-    /* WhatsApp Doodle Background (Clear & High Contrast) */
+    /* WhatsApp High-Contrast Doodle Background */
     .whatsapp-doodle-bg {
       background-color: #0c1317;
       background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23223038' fill-opacity='0.9' fill-rule='evenodd'%3E%3Cpath d='M15 12h6v6h-6zM32 8h4v4h-4zM8 42h8v8H8zM65 14a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM42 58c0-4.5 3.5-8 8-8s8 3.5 8 8-3.5 8-8 8-8-3.5-8-8zm20-38h10v3H62zm-25 42h16v2.5H37zm42 16a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-66 4h8v8h-8zm58-54l5-5 2.5 2.5-5 5zM8 70l10-6.5v13zM78 66h7v7h-7zm-4-30h12v2.5H74zm-50-4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-4 38a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm70-12l-6 6-3.5-3.5 6-6z'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* 💎 Shining Electric Blue Sent Bubble */
+    /* 💎 Shining Electric Blue Bubble (Your Messages) */
     .bubble-sent {
       align-self: flex-end;
       max-width: 82%;
@@ -128,7 +133,7 @@
       word-wrap: break-word;
     }
 
-    /* 🖤 Pure Black Received Bubble */
+    /* 🖤 Pure Black Bubble (Opposite Messages) */
     .bubble-received {
       align-self: flex-start;
       max-width: 82%;
@@ -143,37 +148,52 @@
       word-wrap: break-word;
     }
 
-    /* 5 Options Bottom Nav Tabs */
+    /* ================= DOWN NAV (5 OPTIONS) ================= */
+    .down-nav-container {
+      flex-shrink: 0;
+      width: 100%;
+      background: #111b21;
+      border-top: 1px solid #202c33;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+    }
+
     .nav-tabs {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      height: 52px;
-      border-top: 1px solid #202c33;
-      background: #111b21;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      height: 56px;
+      background: #0b141a;
+      border-top: 1px solid #0084ff; /* ⚡ Cyan highlight border taake clearly dikhe */
+      padding-bottom: env(safe-area-inset-bottom, 4px);
     }
+
     .nav-btn {
       background: none;
       border: none;
-      color: #8696a0;
+      color: #94a3b8;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 3px;
-      font-size: 10px;
+      font-size: 11px;
+      font-weight: 500;
       cursor: pointer;
       position: relative;
+      flex: 1;
+      height: 100%;
     }
     .nav-btn i {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     /* Glowing Dots */
     .dot-green {
       position: absolute;
-      top: -2px;
-      right: -3px;
+      top: 6px;
+      right: 22px;
       width: 7px;
       height: 7px;
       background: #22c55e;
@@ -182,8 +202,8 @@
     }
     .dot-red {
       position: absolute;
-      top: -2px;
-      right: -3px;
+      top: 6px;
+      right: 22px;
       width: 7px;
       height: 7px;
       background: #ef4444;
@@ -238,7 +258,7 @@
           <label style="display: block; font-size: 11px; text-transform: uppercase; color: #8696a0; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 8px;">Enter your email</label>
           <input type="text" id="email-field" placeholder="student@example.com" class="input-box">
           <p id="returning-user-hint" style="font-size: 11px; color: #38bdf8; margin-top: 5px; display: none;">
-            <i class="fa-solid fa-circle-check"></i> Welcome back! Continue dabate hi confession page khul jayega.
+            <i class="fa-solid fa-circle-check"></i> Pehchan liya! Continue dabayein confession page khul jayega.
           </p>
         </div>
 
@@ -302,11 +322,11 @@
       </div>
     </div>
 
-    <!-- ================= SCREEN 3: CONFESSION ROOM (FLEX DOCKED, NEVER DISAPPEARS) ================= -->
-    <div id="screen-3" class="screen whatsapp-doodle-bg" style="display: none; height: 100%;">
+    <!-- ================= SCREEN 3: CONFESSION ROOM ================= -->
+    <div id="screen-3" class="screen whatsapp-doodle-bg">
       
-      <!-- 📌 1. TOP NAV (Fixed Flex Item) -->
-      <div style="flex: 0 0 54px; background: rgba(31, 44, 52, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #222d34; z-index: 40;">
+      <!-- 📌 1. TOP NAV (Always Pinned) -->
+      <div style="flex-shrink: 0; height: 54px; background: rgba(31, 44, 52, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #222d34; z-index: 40;">
         <div>
           <h2 style="font-size: 15px; font-weight: 700; color: #fff;">DCP Confession Page</h2>
           <span style="font-size: 11px; color: #8696a0; font-family: monospace; display: block;">admin:Umer</span>
@@ -317,8 +337,8 @@
         </div>
       </div>
 
-      <!-- 💬 2. CHAT SCROLL AREA (Only this middle part scrolls) -->
-      <div id="chat-messages" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+      <!-- 💬 2. CHAT SCROLL AREA (Sirf yeh hissa scroll hoga) -->
+      <div id="chat-messages" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
         <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 82%;">
           <span style="font-size: 10px; color: #8696a0; font-family: monospace; margin-left: 8px; margin-bottom: 2px;">User #1</span>
           <div class="bubble-received">
@@ -327,11 +347,11 @@
         </div>
       </div>
 
-      <!-- 📌 3. DOWN NAV & INPUT (Fixed Docked Bottom, Always Visible) -->
-      <div style="flex: 0 0 auto; background: #111b21; z-index: 40; border-top: 1px solid #222d34;">
+      <!-- 📌 3. DOWN NAV & MESSAGE INPUT (NEVER HIDES) -->
+      <div class="down-nav-container">
         
         <!-- Message Input Bar -->
-        <div style="padding: 7px 12px; background: #202c33; display: flex; align-items: center; gap: 8px;">
+        <div style="padding: 6px 12px; background: #1f2c34; display: flex; align-items: center; gap: 8px;">
           <input type="text" id="confession-input" placeholder="Message..." 
                  style="flex: 1; padding: 10px 16px; border-radius: 20px; background: #111b21; border: 1px solid #2a3942; color: #fff; font-size: 14px; outline: none;">
           <button type="button" onclick="postConfession()" style="width: 38px; height: 38px; border-radius: 50%; background: #0084ff; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 132, 255, 0.5);">
@@ -355,26 +375,22 @@
 
           <!-- 3. Active Users -->
           <button type="button" onclick="openModal('active-modal')" class="nav-btn">
-            <div style="position: relative;">
-              <i class="fa-solid fa-users"></i>
-              <span class="dot-green"></span>
-            </div>
+            <i class="fa-solid fa-users"></i>
+            <span class="dot-green"></span>
             <span style="color: #22c55e; font-weight: 700;">1 Active</span>
           </button>
 
           <!-- 4. Notice -->
           <button type="button" onclick="openModal('notice-modal')" class="nav-btn">
-            <div style="position: relative;">
-              <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
-              <span class="dot-red"></span>
-            </div>
+            <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+            <span class="dot-red"></span>
             <span style="color: #ef4444; font-weight: 700;">Notice</span>
           </button>
 
           <!-- 5. Me -->
           <button type="button" onclick="openModal('me-modal')" class="nav-btn">
-            <i class="fa-solid fa-circle-user"></i>
-            <span>Me</span>
+            <i class="fa-solid fa-circle-user" style="color: #38bdf8;"></i>
+            <span style="color: #38bdf8; font-weight: 700;">Me</span>
           </button>
         </div>
 
@@ -526,7 +542,6 @@
     let currentUser = null;
     let fallbackDB = {};
 
-    // 1. Persistent Storage Engine (Never forgets the user)
     function getDB() {
       try {
         const data = localStorage.getItem('dcp_confession_permanent_db');
@@ -543,7 +558,7 @@
       } catch (e) {}
     }
 
-    // Auto-fill previous email on load
+    // Auto-fill and recognize returning user on load
     window.addEventListener('DOMContentLoaded', () => {
       try {
         const lastEmail = localStorage.getItem('dcp_last_active_email');
@@ -557,7 +572,6 @@
       } catch (e) {}
     });
 
-    // Screen Transitions
     function showScreen(num) {
       document.getElementById('screen-1').classList.remove('active');
       document.getElementById('screen-2').classList.remove('active');
@@ -569,7 +583,6 @@
       }
     }
 
-    // Email Input Handler
     function handleContinueBtn() {
       const input = document.getElementById('email-field');
       let val = input.value.trim().toLowerCase();
@@ -587,7 +600,6 @@
       if (e.key === 'Enter') handleContinueBtn();
     });
 
-    // Google Login Handlers
     function openGoogleModal() {
       document.getElementById('google-modal').style.display = 'flex';
     }
@@ -597,7 +609,7 @@
       loginUser(email, name);
     }
 
-    // ⚡ CORE LOGIN ENGINE: RETURNING USERS SKIP SCREEN 2 COMPLETELY
+    // Returning user: Screen 2 Skip!
     function loginUser(email, suggestedName = '') {
       activeEmail = email;
       const db = getDB();
@@ -606,14 +618,11 @@
         localStorage.setItem('dcp_last_active_email', email);
       } catch (e) {}
 
-      // 🔥 Agar yeh email pehle login ho chuki hai, to NAAM ya AGE dubara kabi NAHI poochega!
       if (db[email]) {
         currentUser = db[email];
         document.getElementById('me-user-id').innerText = currentUser.userId;
-        // Direct Confession Page par le jayein!
         showScreen(3);
       } else {
-        // Sirf bilkul new user se poochhega
         if (suggestedName) {
           document.getElementById('user-display-name').value = suggestedName;
         }
@@ -621,7 +630,6 @@
       }
     }
 
-    // Save Profile (Sirf 1 Baar New User ke liye)
     function saveAndEnterRoom() {
       const nameInput = document.getElementById('user-display-name');
       let name = nameInput.value.trim();
@@ -633,10 +641,8 @@
 
       const db = getDB();
       const totalUsers = Object.keys(db).length;
-      // Pehla user hamesha User #1 banega
       const assignedId = "User #" + (totalUsers + 1);
 
-      // Save Permanently
       db[activeEmail] = {
         email: activeEmail,
         name: name,
@@ -651,7 +657,6 @@
       showScreen(3);
     }
 
-    // Send Confession in Shining Blue
     function postConfession() {
       const input = document.getElementById('confession-input');
       const text = input.value.trim();
@@ -678,7 +683,6 @@
       if (e.key === 'Enter') postConfession();
     });
 
-    // Modals Handlers
     function openModal(id) {
       const el = document.getElementById(id);
       if (el) el.style.display = 'flex';
