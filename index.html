@@ -504,3 +504,33 @@
 
       const newMsg = `
         <div class="flex flex-col items-end max-w-[82%] self-end">
+          <span class="text-[10px] text-pink-300 mr-2 mb-1 font-mono">${senderTag} (You)</span>
+          <div class="bubble-sent px-4 py-2.5 text-white text-sm shadow font-medium">
+            ${text}
+          </div>
+        </div>
+      `;
+
+      chatArea.innerHTML += newMsg;
+      input.value = '';
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    document.getElementById('confession-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') postConfession();
+    });
+
+    // Modals
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function logoutUser() {
+      closeModal('setting-modal');
+      document.getElementById('email-field').value = '';
+      activeEmail = '';
+      currentUserProfile = null;
+      goToScreen(1);
+    }
+  </script>
+</body>
+</html>
