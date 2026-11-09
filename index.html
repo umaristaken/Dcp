@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
+  <!-- 🔍 Google Search (SEO) Tags -->
   <title>DCP Confessions | Secret Anonymous Confession Room</title>
   <meta name="description" content="Official DCP Confession page. Share your confessions 100% anonymously, secretly and encrypted. DCP Student confession room.">
-  <meta name="keywords" content="DCP confession, DCP confessions, DCP student confession, DCP anonymous">
+  <meta name="keywords" content="DCP confession, DCP confessions, DCP student confession, DCP anonymous, dcp confession page">
   <meta name="author" content="Umer ABDULLAH">
   <meta name="robots" content="index, follow">
   
   <meta name="theme-color" content="#111b21">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="manifest" href="manifest.json">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -66,7 +66,7 @@
       }
     }
 
-    /* Smart App Banner */
+    /* 🚀 Top Banner: Direct APK Download Link */
     .smart-app-banner {
       background: linear-gradient(135deg, #1f2c34, #111b21);
       border-bottom: 1px solid #2a3942;
@@ -76,11 +76,6 @@
       justify-content: space-between;
       gap: 10px;
       z-index: 90;
-      animation: slideDown 0.4s ease;
-    }
-    @keyframes slideDown {
-      from { transform: translateY(-100%); }
-      to { transform: translateY(0); }
     }
     .banner-left {
       display: flex;
@@ -102,11 +97,16 @@
       background: #0084ff;
       color: #fff;
       border: none;
-      padding: 6px 14px;
+      padding: 7px 14px;
       border-radius: 16px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0, 132, 255, 0.4);
     }
     .btn-continue-browser {
       background: transparent;
@@ -250,7 +250,7 @@
       justify-content: space-between;
     }
 
-    /* Context Menu */
+    /* Instagram Action Modal */
     .insta-menu-overlay {
       position: absolute;
       inset: 0;
@@ -415,7 +415,7 @@
 
   <div class="app-frame">
 
-    <!-- Top PWA Banner -->
+    <!-- 🌟 TOP BANNER: Direct Download (app-release.apk) -->
     <div id="smart-banner" class="smart-app-banner">
       <div class="banner-left">
         <div class="banner-icon"><i class="fa-solid fa-mask"></i></div>
@@ -425,9 +425,9 @@
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
-        <button type="button" onclick="triggerAppInstall()" class="btn-get-app">
+        <a href="app-release.apk" download="DCP_Confessions.apk" class="btn-get-app">
           <i class="fa-solid fa-download"></i> Get App
-        </button>
+        </a>
         <button type="button" onclick="dismissBanner()" class="btn-continue-browser">
           Browser
         </button>
@@ -552,7 +552,7 @@
             <i class="fa-solid fa-user-tie"></i><span>Personal</span>
           </button>
           
-          <!-- 🔥 REAL-TIME ACTIVE USERS BUTTON -->
+          <!-- REAL-TIME LIVE ACTIVE COUNT -->
           <button type="button" onclick="openModal('active-modal')" class="nav-btn">
             <i class="fa-solid fa-users"></i><span class="dot-green"></span>
             <span id="nav-active-count" style="color: #22c55e; font-weight: 700;">1 Active</span>
@@ -635,7 +635,6 @@
       </div>
     </div>
 
-    <!-- 🔥 REALTIME ACTIVE USERS MODAL -->
     <div id="active-modal" class="modal-overlay">
       <div class="modal-card" style="text-align: center;">
         <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(34, 197, 94, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
@@ -670,22 +669,6 @@
   </div>
 
   <script>
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('smart-banner').style.display = 'flex';
-    });
-
-    function triggerAppInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt = null;
-      } else {
-        alert("Chrome ke 3 dots (⋮) par tap karke 'Add to Home screen' / 'Install App' par click karein!");
-      }
-    }
-
     function dismissBanner() {
       document.getElementById('smart-banner').style.display = 'none';
       const emailField = document.getElementById('email-field');
@@ -703,7 +686,7 @@
     }
   </script>
 
-  <!-- FIREBASE ADVANCED CHAT & PRESENCE SCRIPT -->
+  <!-- FIREBASE ADVANCED CHAT & REALTIME PRESENCE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { 
@@ -744,7 +727,6 @@
     let unsubscribePresence = null;
     let presenceHeartbeat = null;
     
-    // Reply & Context state
     let activeReplyTarget = null;
     let selectedMsgData = null;
 
@@ -868,13 +850,11 @@
     function startPresenceTracking() {
       updatePresenceStatus();
 
-      // Har 20 second baad heartbeat update
       if (presenceHeartbeat) clearInterval(presenceHeartbeat);
       presenceHeartbeat = setInterval(() => {
         updatePresenceStatus();
       }, 20000);
 
-      // Listen for Live Online Users
       if (unsubscribePresence) unsubscribePresence();
       unsubscribePresence = onSnapshot(collection(db, "online_users"), (snapshot) => {
         const now = Date.now();
@@ -882,11 +862,9 @@
 
         snapshot.forEach((d) => {
           const data = d.data();
-          // Agar 45 second se zyada purana timestamp hai to wo user ja chuka hai
           if (now - data.lastSeen < 45000) {
             liveCount++;
           } else {
-            // Stale user document auto clean-up
             deleteDoc(d.ref).catch(() => {});
           }
         });
@@ -898,7 +876,6 @@
       });
     }
 
-    // Jab user browser band kare ya page chhor kar jaye
     window.addEventListener('beforeunload', removePresenceStatus);
     window.addEventListener('pagehide', removePresenceStatus);
 
