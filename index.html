@@ -1,289 +1,206 @@
-   
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DCP Confession</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#080d11;color:#e9edef;font-family:Arial,sans-serif}
-.hidden{display:none!important}
-header,footer{background:#111b21}
-.chat-bubble-me{background:#005c4b;border-radius:12px 3px 12px 12px}
-.chat-bubble-other{background:#202c33;border-radius:3px 12px 12px 12px}
-.doodle{background-image:radial-gradient(#26343b 1px,transparent 1px);background-size:22px 22px}
-.navbtn{font-size:11px;padding:12px 2px;color:#cbd5e1}
-.navbtn i{display:block;font-size:17px;margin-bottom:5px}
-.navbtn.active{color:#67e8a5}
-.panel{background:#17232c;border:1px solid #34434c;border-radius:16px;padding:16px}
-.action{background:#e9edef;color:#101820;padding:10px 14px;border-radius:10px;font-weight:700}
-.darkinput{width:100%;background:#202c33;padding:12px;border-radius:10px;color:white}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confession App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* WhatsApp jesa doodle background */
+    .whatsapp-bg {
+      background-color: #0b141a;
+      background-image: radial-gradient(#1f2c34 1px, transparent 1px), radial-gradient(#1f2c34 1px, #0b141a 1px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    /* Instagram style bubble curves */
+    .bubble-sent {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      border-radius: 20px 20px 4px 20px;
+    }
+    .bubble-received {
+      background: #262d31;
+      border-radius: 20px 20px 20px 4px;
+    }
+    
+    /* Hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gray-900 flex justify-center items-center min-h-screen font-sans">
 
-<section id="screen-login" class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-<div class="w-20 h-20 rounded-full bg-white text-black flex items-center justify-center text-4xl font-bold mb-5">D</div>
-<h1 class="text-2xl font-bold mb-2">Welcome to DCP Confessions</h1>
-<p class="text-gray-400 mb-6">Sign in with Google to join the community chat.</p>
-<button onclick="login()" class="action w-full max-w-sm"><i class="fa-brands fa-google mr-2"></i>Sign in with Google</button>
-<p id="login-error" class="text-red-300 text-sm mt-4"></p>
-</section>
+  <!-- Mobile Container (Har mobile screen par fit aayega) -->
+  <div class="w-full max-w-md h-screen sm:h-[90vh] bg-gray-950 flex flex-col sm:rounded-3xl overflow-hidden shadow-2xl relative border border-gray-800">
 
-<section id="screen-profile" class="hidden min-h-screen max-w-md mx-auto p-6 flex-col justify-center">
-<h2 class="text-2xl font-bold mb-5">Set up your profile</h2>
-<label class="block mb-2">Gender</label>
-<select id="gender" class="darkinput mb-4"><option>Male</option><option>Female</option></select>
-<label class="block mb-2">Age: <span id="age-label">18</span></label>
-<input id="age" type="range" min="13" max="80" value="18" class="w-full mb-5" oninput="document.getElementById('age-label').textContent=this.value">
-<label class="block mb-2">Display name</label>
-<input id="display-name" maxlength="40" class="darkinput mb-5" placeholder="Choose a display name">
-<button onclick="finishProfile()" class="action w-full">Continue to chat</button>
-</section>
+    <!-- ================= SCREEN 1: LOGIN ================= -->
+    <div id="screen-1" class="flex-1 flex flex-col justify-center px-8 z-10 transition-all duration-300">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-pink-500/30">
+          <i class="fa-solid fa-mask text-white text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-wide">Secret Confessions</h2>
+        <p class="text-gray-400 text-sm mt-1">Apna raaz share karein bina pehchan ke</p>
+      </div>
 
-<section id="screen-app" class="hidden min-h-screen flex-col">
-<header class="text-center p-4 border-b border-gray-700">
-<h1 class="text-xl font-bold">DCP Confession</h1>
-<p class="text-xs text-gray-400 mt-1">Developer: Default · Operator: Glitchy</p>
-<p id="user-label" class="text-xs text-gray-400 mt-2"></p>
-</header>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 uppercase tracking-wider">Email Address</label>
+          <input type="email" id="user-email" placeholder="Enter your email" 
+                 class="w-full px-4 py-3 rounded-xl bg-gray-800/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition">
+        </div>
 
-<main id="page-home" class="doodle flex-1 max-w-2xl w-full mx-auto p-4 pb-36">
-<div id="chat-stream" class="space-y-4"><p class="text-center text-gray-400">Loading chat...</p></div>
-</main>
+        <button onclick="goToScreen(2)" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition shadow-lg shadow-purple-600/30">
+          Next
+        </button>
 
-<main id="page-voting" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-trophy mr-2"></i>Voting Battle</h2>
-<div class="panel">
-<p class="mb-3">Voting Battle UI</p>
-<p class="text-sm text-gray-300">The real shared battle needs server-side round timing, participant limits and score validation.</p>
-<p class="text-sm text-gray-400 mt-3">Schedule: 6:00 AM – 12:00 AM Pakistan time</p>
-</div>
-</main>
+        <div class="flex items-center my-4">
+          <div class="flex-1 border-t border-gray-700"></div>
+          <span class="px-3 text-xs text-gray-500 uppercase">OR</span>
+          <div class="flex-1 border-t border-gray-700"></div>
+        </div>
 
-<main id="page-coins" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-coins mr-2"></i>DCP Coins</h2>
-<div class="panel mb-4">
-<p class="text-gray-400 text-sm">Demo balance on this device</p>
-<p class="text-3xl font-bold mt-1"><span id="coin-balance">0</span> D Coins</p>
-<p class="text-xs text-yellow-300 mt-2">Demo only — not a secure shared balance.</p>
-</div>
-<div class="panel mb-4">
-<h3 class="font-bold mb-3">Get Coins · Mini Games</h3>
-<button class="action w-full mb-3" onclick="spin()">🎡 Spin & Win (demo)</button>
-<button class="action w-full mb-3" onclick="tapGame()">👆 Tap Challenge (demo)</button>
-<button class="action w-full mb-3" onclick="memoryGame()">🧠 Memory Match (demo)</button>
-<button class="action w-full" onclick="quizGame()">❓ Quiz Time (demo)</button>
-<p id="game-result" class="text-sm mt-3 text-green-300"></p>
-</div>
-<div class="panel">
-<h3 class="font-bold mb-3">Avatar Shop</h3>
-<div id="avatar-shop" class="grid grid-cols-2 gap-3"></div>
-<p class="text-xs text-gray-400 mt-3">Purchases here are local demos, not secure shared purchases.</p>
-</div>
-</main>
+        <!-- Continue with Google Button -->
+        <button onclick="goToScreen(2)" class="w-full py-3 bg-white text-gray-800 font-medium rounded-xl flex items-center justify-center space-x-3 hover:bg-gray-100 transition shadow">
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.36 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.27C.46 8.2.0 10.04.0 12s.46 3.8 1.27 5.42l4.01-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.64 1.27 6.58l4.01 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </div>
+    </div>
 
-<main id="page-notice" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4">Notice</h2>
-<div class="panel">Keep conversations respectful. Do not share passwords, addresses, or other private information in public chat.</div>
-</main>
+    <!-- ================= SCREEN 2: PROFILE & AGE ================= -->
+    <div id="screen-2" class="flex-1 flex flex-col justify-center px-8 z-10 hidden transition-all duration-300">
+      <h2 class="text-2xl font-bold text-white mb-2">About You</h2>
+      <p class="text-gray-400 text-sm mb-6">Yeh app par kisi ko nazar nahi aayega (Anonymous).</p>
 
-<main id="page-personal" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4">Personal</h2>
-<div class="panel space-y-4">
-<p><i class="fa-brands fa-snapchat text-yellow-300 text-xl mr-3"></i>@callmedefaul</p>
-<p><i class="fa-brands fa-snapchat text-yellow-300 text-xl mr-3"></i>callmeglitchy</p>
-</div>
-</main>
+      <div class="space-y-6">
+        <div>
+          <label class="block text-gray-300 text-sm mb-2 font-medium">What's your name?</label>
+          <input type="text" id="user-name" placeholder="Apna naam ya nickname likhein" 
+                 class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500">
+        </div>
 
-<main id="page-settings" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4">Settings</h2>
-<div class="panel">
-<label class="flex items-center justify-between gap-3">
-<span>Show my display name in chat</span>
-<input type="checkbox" id="show-name" onchange="saveSettings()">
-</label>
-<p class="text-xs text-gray-400 mt-3">When off, other people see “Anonymous”.</p>
-<hr class="border-gray-700 my-4">
-<p id="settings-email" class="text-sm break-all mb-4"></p>
-<button class="action" onclick="logout()">Sign out</button>
-</div>
-</main>
+        <div>
+          <label class="block text-gray-300 text-sm mb-2 font-medium">Age Verification (Select Age)</label>
+          <!-- Scrolling Age Picker -->
+          <div class="relative">
+            <select id="user-age" class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white appearance-none focus:outline-none focus:border-purple-500 cursor-pointer">
+              <!-- Options via JS ya hardcoded -->
+              <option value="18">18 Years old</option>
+              <option value="19">19 Years old</option>
+              <option value="20" selected>20 Years old</option>
+              <option value="21">21 Years old</option>
+              <option value="22">22 Years old</option>
+              <option value="23">23 Years old</option>
+              <option value="24">24 Years old</option>
+              <option value="25+">25+ Years old</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </div>
+          </div>
+          <span class="text-xs text-gray-500 mt-1 block">Aapki umar 18+ honi zaroori hai.</span>
+        </div>
 
-<main id="page-me" class="hidden flex-1 max-w-xl w-full mx-auto p-4 pb-36">
-<h2 class="text-xl font-bold mb-4">My Profile</h2>
-<div class="panel">
-<div class="text-5xl mb-3">👤</div>
-<p id="me-name" class="mb-2"></p>
-<p id="me-age" class="text-sm text-gray-400 mb-4"></p>
-<button class="action" onclick="showPage('coins')">View Coins</button>
-</div>
-</main>
+        <button onclick="goToScreen(3)" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white font-medium rounded-xl transition shadow-lg shadow-pink-500/20 mt-4">
+          Enter Confession Room
+        </button>
+      </div>
+    </div>
 
-<footer class="fixed bottom-0 left-0 right-0 border-t border-gray-700">
-<div class="max-w-2xl mx-auto grid grid-cols-7 text-center">
-<button class="navbtn" data-page="voting" onclick="showPage('voting')"><i class="fa-solid fa-trophy"></i>Voting</button>
-<button class="navbtn" data-page="coins" onclick="showPage('coins')"><i class="fa-solid fa-coins"></i>Coins</button>
-<button class="navbtn" data-page="notice" onclick="showPage('notice')"><i class="fa-solid fa-bell"></i>Notice</button>
-<button class="navbtn active" data-page="home" onclick="showPage('home')"><i class="fa-solid fa-house"></i>Home</button>
-<button class="navbtn" data-page="personal" onclick="showPage('personal')"><i class="fa-solid fa-user-group"></i>Personal</button>
-<button class="navbtn" data-page="settings" onclick="showPage('settings')"><i class="fa-solid fa-gear"></i>Settings</button>
-<button class="navbtn" data-page="me" onclick="showPage('me')"><i class="fa-solid fa-user"></i>Me</button>
-</div>
-<div id="chat-composer" class="max-w-2xl mx-auto p-2 flex gap-2">
-<input id="chat-input" maxlength="1000" class="darkinput flex-1 min-w-0" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMessage()">
-<button onclick="sendMessage()" class="action"><i class="fa-solid fa-paper-plane"></i></button>
-</div>
-</footer>
-</section>
+    <!-- ================= SCREEN 3: CONFESSION ROOM ================= -->
+    <div id="screen-3" class="flex-1 flex flex-col hidden whatsapp-bg relative h-full">
+      <!-- Top Bar -->
+      <div class="px-4 py-3 bg-[#1f2c34]/90 backdrop-blur-md flex items-center justify-between border-b border-gray-800 text-white z-20">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-white shadow">
+            <i class="fa-solid fa-user-secret"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm">Anonymous Confessions</h3>
+            <span class="text-xs text-green-400 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-green-400 mr-1 animate-pulse"></span> Online
+            </span>
+          </div>
+        </div>
+      </div>
 
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {getFirestore,collection,addDoc,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      <!-- Chat Messages Area -->
+      <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 no-scrollbar flex flex-col justify-end">
+        <!-- Received Message (Instagram style bubble) -->
+        <div class="flex flex-col items-start max-w-[80%]">
+          <span class="text-[10px] text-gray-400 ml-2 mb-0.5">Anonymous #402</span>
+          <div class="bubble-received p-3 text-white text-sm shadow">
+            Mujhe bachpan se ek ladki pasand thi, par kabhi himmat nahi hui batane ki... 🥀
+          </div>
+        </div>
 
-const firebaseConfig={
- apiKey:"AIzaSyBeiSuSG4aVY-STxSBhfzsOrk7sWmTrypA",
- authDomain:"dcp-38f81.firebaseapp.com",
- projectId:"dcp-38f81",
- storageBucket:"dcp-38f81.firebasestorage.app",
- messagingSenderId:"983195848171",
- appId:"1:983195848171:web:6bab29c67e75ba5b3b1dae",
- measurementId:"G-NW85J4C823"
-};
+        <!-- Sent Message (Gradient Instagram style bubble) -->
+        <div class="flex flex-col items-end max-w-[80%] self-end">
+          <div class="bubble-sent p-3 text-white text-sm shadow">
+            Same kahani! Aise confessions parh kar lagta hai hum akele nahi hain 😂
+          </div>
+        </div>
+      </div>
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-const provider=new GoogleAuthProvider();
-let user=null,profile={},stopChat=null;
-const $=id=>document.getElementById(id);
+      <!-- Bottom Message Input -->
+      <div class="p-3 bg-[#1f2c34]/95 border-t border-gray-800 flex items-center space-x-2 z-20">
+        <input type="text" id="msg-input" placeholder="Message..." 
+               class="flex-1 px-4 py-2.5 rounded-full bg-[#2a3942] border border-transparent text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 text-sm">
+        <button onclick="sendMessage()" class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-lg shadow-purple-500/30">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+      </div>
+    </div>
 
-function screen(id){
- ["screen-login","screen-profile","screen-app"].forEach(x=>$(x).classList.add("hidden"));
- $(id).classList.remove("hidden");
-}
-window.login=async()=>{
- $("login-error").textContent="";
- try{await signInWithPopup(auth,provider)}
- catch(e){$("login-error").textContent="Login failed: "+(e.message||e.code)}
-};
+  </div>
 
-onAuthStateChanged(auth,async u=>{
- user=u;
- if(!u){if(stopChat){stopChat();stopChat=null}screen("screen-login");return}
- $("settings-email").textContent=u.email||"";
- const saved=localStorage.getItem("dcp-profile-"+u.uid);
- if(saved){
-  try{profile=JSON.parse(saved);openApp()}catch{screen("screen-profile")}
- }else screen("screen-profile");
-});
+  <script>
+    // Screen Navigation
+    function goToScreen(screenNumber) {
+      document.getElementById('screen-1').classList.add('hidden');
+      document.getElementById('screen-2').classList.add('hidden');
+      document.getElementById('screen-3').classList.add('hidden');
 
-window.finishProfile=()=>{
- const name=$("display-name").value.trim();
- if(!name){alert("Please enter a display name.");return}
- if(!user){screen("screen-login");return}
- profile={name:name.slice(0,40),gender:$("gender").value,age:Number($("age").value)};
- localStorage.setItem("dcp-profile-"+user.uid,JSON.stringify(profile));
- openApp();
-};
+      document.getElementById(`screen-${screenNumber}`).classList.remove('hidden');
+    }
 
-function openApp(){
- screen("screen-app");
- $("user-label").textContent="Signed in";
- $("me-name").textContent="Name: "+(profile.name||"User");
- $("me-age").textContent=(profile.gender||"")+", "+(profile.age||"")+" years";
- $("show-name").checked=localStorage.getItem("dcp-show-name-"+user.uid)==="true";
- updateCoins();renderShop();loadChat();
-}
+    // Send Message Logic
+    function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (!text) return;
 
-window.saveSettings=()=>localStorage.setItem("dcp-show-name-"+user.uid,$("show-name").checked?"true":"false");
+      const chatBox = document.getElementById('chat-box');
+      
+      const newMsg = `
+        <div class="flex flex-col items-end max-w-[80%] self-end animate-fade-in">
+          <div class="bubble-sent p-3 text-white text-sm shadow">
+            ${text}
+          </div>
+        </div>
+      `;
 
-window.showPage=name=>{
- ["home","voting","coins","notice","persoonal","settings","me"].forEach(p=>$("page-"+p).classList.toggle("hidden",p!==name));
- document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
- $("chat-composer").classList.toggle("hidden",name!=="home");
-};
+      chatBox.innerHTML += newMsg;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-window.sendMessage=async()=>{
- const input=$("chat-input"),text=input.value.trim();
- if(!text||!user)return;
- input.value="";
- try{
-  await addDoc(collection(db,"messages"),{
-   text,senderName:profile.name||"User",senderUid:user.uid,
-   gender:profile.gender||"—",age:Number(profile.age||18),
-   reactions:{heart:0,laugh:0,like:0,wow:0,angry:0},
-   timestamp:serverTimestamp()
-  });
- }catch(e){input.value=text;alert("Message could not be sent. Please check Firestore Rules.")}
-};
-
-function loadChat(){
- if(stopChat)stopChat();
- const q=query(collection(db,"messages"),orderBy("timestamp","asc"));
- stopChat=onSnapshot(q,snap=>{
-  const stream=$("chat-stream");stream.replaceChildren();
-  snap.forEach(ds=>{
-   const d=ds.data(),mine=d.senderUid===user.uid;
-   const wrap=document.createElement("div");
-   wrap.className="flex flex-col "+(mine?"items-end":"items-start");
-   const sender=document.createElement("p");
-   sender.className="text-xs text-gray-400 mb-1";
-   sender.textContent=mine?"You":($("show-name").checked?(d.senderName||"User"):"Anonymous");
-   const bubble=document.createElement("div");
-   bubble.className="max-w-[90%] px-3 py-3 "+(mine?"chat-bubble-me":"chat-bubble-other");
-   const msg=document.createElement("p");
-   msg.className="whitespace-pre-wrap break-words";
-   msg.textContent=d.text||"";
-   bubble.appendChild(msg);
-   const row=document.createElement("div");
-   row.className="flex gap-3 text-xs mt-3 pt-2 border-t border-white/10";
-   const reactions=d.reactions||{};
-   [["heart","❤️"],["laugh","😂"],["like","👍"],["wow","😮"],["angry","😡"]].forEach(([type,emoji])=>{
-    const b=document.createElement("button");
-    const key="dcp-react-"+user.uid+"-"+ds.id+"-"+type;
-    const used=localStorage.getItem(key)==="1";
-    b.textContent=emoji+" "+Number(reactions[type]||0);
-    b.title=used?"Already reacted on this device":"Reaction";
-    b.onclick=()=>alert("Reaction saving needs matching secure Firestore rules. Repeated-count bug is not safely fixed by client-only code.");
-    row.appendChild(b);
-   });
-   bubble.appendChild(row);wrap.append(sender,bubble);stream.appendChild(wrap);
-  });
- },e=>{$("chat-stream").textContent="Chat unavailable. Check Firestore Rules and connection."});
-}
-
-function updateCoins(){
- $("coin-balance").textContent=localStorage.getItem("dcp-demo-coins-"+user.uid)||"0";
-}
-function addDemoCoins(n){
- const k="dcp-demo-coins-"+user.uid;
- localStorage.setItem(k,String(Number(localStorage.getItem(k)||0)+n));
- updateCoins();
-}
-window.spin=()=>{const n=[10,20,30,50][Math.floor(Math.random()*4)];addDemoCoins(n);$("game-result").textContent="Demo spin reward: "+n+" coins."};
-window.tapGame=()=>{addDemoCoins(10);$("game-result").textContent="Demo tap challenge: +10 coins."};
-window.memoryGame=()=>{addDemoCoins(10);$("game-result").textContent="Demo memory match: +10 coins."};
-window.quizGame=()=>{const answer=prompt("Quiz: Which planet is known as the Red Planet?\nType your answer");if(answer&&answer.trim().toLowerCase()==="mars"){addDemoCoins(15);$("game-result").textContent="Correct! +15 demo coins."}else $("game-result").textContent="Not quite. The answer is Mars."};
-
-function renderShop(){
- const shop=$("avatar-shop");shop.replaceChildren();
- for(let i=1;i<=15;i++){
-  const price=200*i*i;
-  const card=document.createElement("div");card.className="bg-gray-800 rounded-xl p-3 text-center";
-  const icon=document.createElement("div");icon.className="text-3xl mb-2";icon.textContent=["👤","😎","🦊","🐺","🐉","👑","🦁","🌙","⚡","🔥","💎","🦅","🌌","🤖","🏆"][i-1];
-  const label=document.createElement("p");label.className="text-sm mb-2";label.textContent="Avatar "+i;
-  const cost=document.createElement("p");cost.className="text-xs text-gray-300 mb-3";cost.textContent=price.toLocaleString()+" coins";
-  const btn=document.createElement("button");btn.className="action text-xs";btn.textContent="Buy (demo)";
-  btn.onclick=()=>alert("Avatar shop is a visual demo. Secure purchases require a backend.");
-  card.append(icon,label,cost,btn);shop.appendChild(card);
- }
-}
-window.logout=async()=>{if(stopChat){stopChat();stopChat=null}await signOut(auth)};
-</script>
+    // Enter press karne par message send ho
+    document.getElementById('msg-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 </body>
 </html>
