@@ -15,7 +15,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Screen lock taake mobile browser bottom toolbar ko na dawaye */
     html, body {
       width: 100%;
       height: 100%;
@@ -91,10 +90,15 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 132, 255, 0.35);
+      transition: background 0.2s, transform 0.1s;
     }
     .btn-primary:active {
       transform: scale(0.98);
       background: #006ed4;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .btn-google {
@@ -165,7 +169,7 @@
       align-items: center;
       height: 56px;
       background: #0b141a;
-      border-top: 1px solid #0084ff; /* ⚡ Cyan highlight border taake clearly dikhe */
+      border-top: 1px solid #0084ff;
       padding-bottom: env(safe-area-inset-bottom, 4px);
     }
 
@@ -258,11 +262,11 @@
           <label style="display: block; font-size: 11px; text-transform: uppercase; color: #8696a0; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 8px;">Enter your email</label>
           <input type="text" id="email-field" placeholder="student@example.com" class="input-box">
           <p id="returning-user-hint" style="font-size: 11px; color: #38bdf8; margin-top: 5px; display: none;">
-            <i class="fa-solid fa-circle-check"></i> Pehchan liya! Continue dabayein confession page khul jayega.
+            <i class="fa-solid fa-circle-check"></i> Pehchan liya! Continue dabayein confession room khul jayega.
           </p>
         </div>
 
-        <button type="button" onclick="handleContinueBtn()" class="btn-primary">
+        <button type="button" id="btn-login-continue" class="btn-primary">
           Continue
         </button>
 
@@ -273,7 +277,7 @@
         </div>
 
         <!-- Google Auth Button -->
-        <button type="button" onclick="openGoogleModal()" class="btn-google">
+        <button type="button" id="btn-google-login" class="btn-google">
           <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.36 7.31 24 12 24z"/>
@@ -316,7 +320,7 @@
           <span style="font-size: 11px; color: #64748b; margin-top: 5px; display: block;">Rules: Confession feed is strictly for 18+.</span>
         </div>
 
-        <button type="button" onclick="saveAndEnterRoom()" class="btn-primary" style="margin-top: 6px;">
+        <button type="button" id="btn-save-profile" class="btn-primary" style="margin-top: 6px;">
           Join Confession Room
         </button>
       </div>
@@ -337,13 +341,10 @@
         </div>
       </div>
 
-      <!-- 💬 2. CHAT SCROLL AREA (Sirf yeh hissa scroll hoga) -->
+      <!-- 💬 2. CHAT SCROLL AREA (Firebase Real-time Sync) -->
       <div id="chat-messages" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 82%;">
-          <span style="font-size: 10px; color: #8696a0; font-family: monospace; margin-left: 8px; margin-bottom: 2px;">User #1</span>
-          <div class="bubble-received">
-            Welcome to DCP Confessions! Sab ka pehla message anonymous rahega. 🤫
-          </div>
+        <div style="text-align: center; color: #64748b; font-size: 12px; margin: 20px 0;">
+          Connecting to secure server...
         </div>
       </div>
 
@@ -352,9 +353,9 @@
         
         <!-- Message Input Bar -->
         <div style="padding: 6px 12px; background: #1f2c34; display: flex; align-items: center; gap: 8px;">
-          <input type="text" id="confession-input" placeholder="Message..." 
+          <input type="text" id="confession-input" placeholder="Message anonymously..." 
                  style="flex: 1; padding: 10px 16px; border-radius: 20px; background: #111b21; border: 1px solid #2a3942; color: #fff; font-size: 14px; outline: none;">
-          <button type="button" onclick="postConfession()" style="width: 38px; height: 38px; border-radius: 50%; background: #0084ff; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 132, 255, 0.5);">
+          <button type="button" id="btn-send-confession" style="width: 38px; height: 38px; border-radius: 50%; background: #0084ff; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 132, 255, 0.5);">
             <i class="fa-solid fa-paper-plane" style="font-size: 13px;"></i>
           </button>
         </div>
@@ -377,7 +378,7 @@
           <button type="button" onclick="openModal('active-modal')" class="nav-btn">
             <i class="fa-solid fa-users"></i>
             <span class="dot-green"></span>
-            <span style="color: #22c55e; font-weight: 700;">1 Active</span>
+            <span id="nav-active-count" style="color: #22c55e; font-weight: 700;">1 Active</span>
           </button>
 
           <!-- 4. Notice -->
@@ -409,7 +410,7 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div onclick="selectGoogleAcc('umer.personal@gmail.com', 'Umer')" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #111b21; border-radius: 12px; cursor: pointer;">
+          <div onclick="window.selectGoogleAcc('umer.personal@gmail.com', 'Umer')" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #111b21; border-radius: 12px; cursor: pointer;">
             <div style="width: 36px; height: 36px; border-radius: 50%; background: #2563eb; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center;">U</div>
             <div>
               <div style="font-size: 14px; font-weight: 600;">Umer Personal</div>
@@ -417,7 +418,7 @@
             </div>
           </div>
 
-          <div onclick="selectGoogleAcc('student.dcp@gmail.com', 'DCP Student')" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #111b21; border-radius: 12px; cursor: pointer;">
+          <div onclick="window.selectGoogleAcc('student.dcp@gmail.com', 'DCP Student')" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #111b21; border-radius: 12px; cursor: pointer;">
             <div style="width: 36px; height: 36px; border-radius: 50%; background: #7c3aed; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center;">D</div>
             <div>
               <div style="font-size: 14px; font-weight: 600;">DCP Student</div>
@@ -436,7 +437,7 @@
         </div>
         <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">Settings</h3>
         <p style="font-size: 13px; color: #8696a0; margin-bottom: 20px;">Are you sure you want to logout from DCP Confessions?</p>
-        <button type="button" onclick="logoutUser()" style="width: 100%; padding: 12px; background: #ef4444; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 8px;">Logout</button>
+        <button type="button" onclick="window.logoutUser()" style="width: 100%; padding: 12px; background: #ef4444; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 8px;">Logout</button>
         <button type="button" onclick="closeModal('setting-modal')" style="width: 100%; padding: 10px; background: transparent; color: #8696a0; border: none; font-size: 14px; cursor: pointer;">Cancel</button>
       </div>
     </div>
@@ -472,15 +473,15 @@
       </div>
     </div>
 
-    <!-- Modal 4: Active Users (Real 1 User) -->
+    <!-- Modal 4: Active Users (Real Community) -->
     <div id="active-modal" class="modal-overlay">
       <div class="modal-card" style="text-align: center;">
         <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(34, 197, 94, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
           <span style="width: 14px; height: 14px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 12px #22c55e;"></span>
         </div>
         <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Active Community</h3>
-        <p style="font-size: 22px; font-weight: 800; color: #22c55e; margin: 8px 0;">1 Active User</p>
-        <p style="font-size: 13px; color: #8696a0; margin-bottom: 18px;">Right now you are active in the DCP Confession room.</p>
+        <p id="modal-active-count" style="font-size: 22px; font-weight: 800; color: #22c55e; margin: 8px 0;">1 Registered User</p>
+        <p style="font-size: 13px; color: #8696a0; margin-bottom: 18px;">Real-time connected anonymously via Firebase Cloud Database.</p>
         <button type="button" onclick="closeModal('active-modal')" style="width: 100%; padding: 12px; background: #2a3942; color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">Dismiss</button>
       </div>
     </div>
@@ -536,41 +537,58 @@
 
   </div>
 
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- Global Modal Controls -->
   <script>
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
+  </script>
+
+  <!-- ================= FIREBASE V10 INTEGRATION SCRIPT ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      setDoc, 
+      getDoc, 
+      getDocs, 
+      addDoc, 
+      serverTimestamp, 
+      onSnapshot, 
+      query, 
+      orderBy, 
+      limit 
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    // 🔑 Aapki Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBeiSuSG4aVY-STxSBhfzsOrk7sWmTrypA",
+      authDomain: "dcp-38f81.firebaseapp.com",
+      projectId: "dcp-38f81",
+      storageBucket: "dcp-38f81.firebasestorage.app",
+      messagingSenderId: "983195848171",
+      appId: "1:983195848171:web:6bab29c67e75ba5b3b1dae",
+      measurementId: "G-NW85J4C823"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    try { getAnalytics(app); } catch (e) {}
+
+    // State Variables
     let activeEmail = '';
     let currentUser = null;
-    let fallbackDB = {};
-
-    function getDB() {
-      try {
-        const data = localStorage.getItem('dcp_confession_permanent_db');
-        return data ? JSON.parse(data) : fallbackDB;
-      } catch (e) {
-        return fallbackDB;
-      }
-    }
-
-    function saveDB(db) {
-      fallbackDB = db;
-      try {
-        localStorage.setItem('dcp_confession_permanent_db', JSON.stringify(db));
-      } catch (e) {}
-    }
-
-    // Auto-fill and recognize returning user on load
-    window.addEventListener('DOMContentLoaded', () => {
-      try {
-        const lastEmail = localStorage.getItem('dcp_last_active_email');
-        if (lastEmail) {
-          const db = getDB();
-          if (db[lastEmail]) {
-            document.getElementById('email-field').value = lastEmail;
-            document.getElementById('returning-user-hint').style.display = 'block';
-          }
-        }
-      } catch (e) {}
-    });
+    let unsubscribeChat = null;
 
     function showScreen(num) {
       document.getElementById('screen-1').classList.remove('active');
@@ -583,7 +601,30 @@
       }
     }
 
-    function handleContinueBtn() {
+    // Email ko clean document id banana
+    function sanitizeDocId(email) {
+      return email.toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
+    }
+
+    // Auto check if user returned previously
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const lastEmail = localStorage.getItem('dcp_last_active_email');
+        if (lastEmail) {
+          document.getElementById('email-field').value = lastEmail;
+          const userDocRef = doc(db, "users", sanitizeDocId(lastEmail));
+          const snap = await getDoc(userDocRef);
+          if (snap.exists()) {
+            document.getElementById('returning-user-hint').style.display = 'block';
+          }
+        }
+      } catch (e) {
+        console.error("Local check error:", e);
+      }
+    });
+
+    // 1. LOGIN / CONTINUE HANDLER
+    async function handleContinueBtn() {
       const input = document.getElementById('email-field');
       let val = input.value.trim().toLowerCase();
 
@@ -593,45 +634,56 @@
         val = val.replace(/\s+/g, '') + '@gmail.com';
       }
 
-      loginUser(val);
+      await loginUser(val);
     }
 
+    document.getElementById('btn-login-continue').addEventListener('click', handleContinueBtn);
     document.getElementById('email-field').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') handleContinueBtn();
     });
 
-    function openGoogleModal() {
-      document.getElementById('google-modal').style.display = 'flex';
-    }
+    document.getElementById('btn-google-login').addEventListener('click', () => {
+      openModal('google-modal');
+    });
 
-    function selectGoogleAcc(email, name) {
+    window.selectGoogleAcc = async function(email, name) {
       closeModal('google-modal');
-      loginUser(email, name);
-    }
+      await loginUser(email, name);
+    };
 
-    // Returning user: Screen 2 Skip!
-    function loginUser(email, suggestedName = '') {
+    // Firebase Firestore se User Verify Karna
+    async function loginUser(email, suggestedName = '') {
       activeEmail = email;
-      const db = getDB();
+      localStorage.setItem('dcp_last_active_email', email);
+
+      const docId = sanitizeDocId(email);
+      const userRef = doc(db, "users", docId);
 
       try {
-        localStorage.setItem('dcp_last_active_email', email);
-      } catch (e) {}
-
-      if (db[email]) {
-        currentUser = db[email];
-        document.getElementById('me-user-id').innerText = currentUser.userId;
-        showScreen(3);
-      } else {
-        if (suggestedName) {
-          document.getElementById('user-display-name').value = suggestedName;
+        const snap = await getDoc(userRef);
+        if (snap.exists()) {
+          // Returning user -> Seedha Confession Room
+          currentUser = snap.data();
+          document.getElementById('me-user-id').innerText = currentUser.userId;
+          showScreen(3);
+          initRealtimeRoom();
+        } else {
+          // New user -> Profile Setup
+          if (suggestedName) {
+            document.getElementById('user-display-name').value = suggestedName;
+          }
+          showScreen(2);
         }
+      } catch (err) {
+        console.error("Error reading user doc:", err);
         showScreen(2);
       }
     }
 
-    function saveAndEnterRoom() {
+    // 2. PROFILE SAVE TO FIREBASE
+    async function saveAndEnterRoom() {
       const nameInput = document.getElementById('user-display-name');
+      const saveBtn = document.getElementById('btn-save-profile');
       let name = nameInput.value.trim();
       const age = document.getElementById('user-age-select').value;
 
@@ -639,65 +691,134 @@
         name = "Anonymous " + Math.floor(Math.random() * 80 + 10);
       }
 
-      const db = getDB();
-      const totalUsers = Object.keys(db).length;
-      const assignedId = "User #" + (totalUsers + 1);
+      saveBtn.disabled = true;
+      saveBtn.innerText = "Connecting...";
 
-      db[activeEmail] = {
-        email: activeEmail,
-        name: name,
-        age: age,
-        userId: assignedId
-      };
-      saveDB(db);
+      try {
+        // Total users count maloom karna unique User # tag dene ke liye
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const assignedId = "User #" + (usersSnapshot.size + 1);
 
-      currentUser = db[activeEmail];
-      document.getElementById('me-user-id').innerText = assignedId;
+        const userData = {
+          email: activeEmail,
+          name: name,
+          age: age,
+          userId: assignedId,
+          createdAt: serverTimestamp()
+        };
 
-      showScreen(3);
+        const docId = sanitizeDocId(activeEmail);
+        await setDoc(doc(db, "users", docId), userData);
+
+        currentUser = userData;
+        document.getElementById('me-user-id').innerText = assignedId;
+
+        showScreen(3);
+        initRealtimeRoom();
+      } catch (err) {
+        console.error("Save profile error:", err);
+        alert("Firestore error! Kripya check karein ke Firestore database rules allow write.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Join Confession Room";
+      }
+    }
+    document.getElementById('btn-save-profile').addEventListener('click', saveAndEnterRoom);
+
+    // 3. REALTIME CONFESSIONS FEED (ONSNAPSHOT)
+    function initRealtimeRoom() {
+      if (unsubscribeChat) unsubscribeChat();
+
+      const chatArea = document.getElementById('chat-messages');
+      const confessionsRef = collection(db, "confessions");
+      const q = query(confessionsRef, orderBy("createdAt", "asc"), limit(100));
+
+      unsubscribeChat = onSnapshot(q, (snapshot) => {
+        chatArea.innerHTML = '';
+
+        if (snapshot.empty) {
+          chatArea.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: flex-start; max-width: 82%;">
+              <span style="font-size: 10px; color: #8696a0; font-family: monospace; margin-left: 8px; margin-bottom: 2px;">Admin</span>
+              <div class="bubble-received">
+                Welcome to DCP Confessions! Sab ka pehla message anonymous rahega. 🤫
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const isMe = currentUser && (data.senderEmail === currentUser.email || data.senderId === currentUser.userId);
+
+          const bubbleWrap = document.createElement('div');
+          bubbleWrap.style.cssText = `display: flex; flex-direction: column; max-width: 82%; ${isMe ? 'align-self: flex-end; align-items: flex-end;' : 'align-self: flex-start; align-items: flex-start;'}`;
+
+          const senderLabel = document.createElement('span');
+          senderLabel.style.cssText = `font-size: 10px; font-family: monospace; margin-bottom: 2px; ${isMe ? 'color: #38bdf8; margin-right: 8px;' : 'color: #8696a0; margin-left: 8px;'}`;
+          senderLabel.innerText = isMe ? `${data.senderId || 'You'} (You)` : (data.senderId || 'Anonymous');
+
+          const bubble = document.createElement('div');
+          bubble.className = isMe ? 'bubble-sent' : 'bubble-received';
+          bubble.innerText = data.text;
+
+          bubbleWrap.appendChild(senderLabel);
+          bubbleWrap.appendChild(bubble);
+          chatArea.appendChild(bubbleWrap);
+        });
+
+        // Auto scroll to bottom
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }, (error) => {
+        console.error("Confessions snapshot error:", error);
+      });
+
+      // Update Active count modal with total registered members
+      getDocs(collection(db, "users")).then((usersSnap) => {
+        const count = usersSnap.size || 1;
+        document.getElementById('nav-active-count').innerText = `${count} Active`;
+        document.getElementById('modal-active-count').innerText = `${count} Registered Users`;
+      }).catch(() => {});
     }
 
-    function postConfession() {
+    // 4. POST CONFESSION TO FIRESTORE
+    async function postConfession() {
       const input = document.getElementById('confession-input');
       const text = input.value.trim();
       if (!text) return;
 
-      const chatArea = document.getElementById('chat-messages');
-      const sender = currentUser ? currentUser.userId : "User #1";
+      const senderId = currentUser ? currentUser.userId : "User #1";
+      const senderEmail = currentUser ? currentUser.email : activeEmail;
 
-      const bubble = `
-        <div style="display: flex; flex-direction: column; align-items: flex-end; max-width: 82%; align-self: flex-end;">
-          <span style="font-size: 10px; color: #38bdf8; font-family: monospace; margin-right: 8px; margin-bottom: 2px;">${sender} (You)</span>
-          <div class="bubble-sent">
-            ${text}
-          </div>
-        </div>
-      `;
-
-      chatArea.innerHTML += bubble;
       input.value = '';
-      chatArea.scrollTop = chatArea.scrollHeight;
+
+      try {
+        await addDoc(collection(db, "confessions"), {
+          text: text,
+          senderId: senderId,
+          senderEmail: senderEmail,
+          createdAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("Send confession error:", err);
+        alert("Message send nahi ho saka! Kripya Firestore rules check karein.");
+      }
     }
 
+    document.getElementById('btn-send-confession').addEventListener('click', postConfession);
     document.getElementById('confession-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') postConfession();
     });
 
-    function openModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'flex';
-    }
-
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    }
-
-    function logoutUser() {
-      closeModal('setting-modal');
+    // 5. LOGOUT
+    window.logoutUser = function() {
+      if (unsubscribeChat) unsubscribeChat();
       currentUser = null;
+      activeEmail = '';
+      closeModal('setting-modal');
       showScreen(1);
-    }
+    };
   </script>
 </body>
 </html>
