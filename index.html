@@ -30,9 +30,7 @@
       user-select: text !important;
     }
 
-    /* 🛡️ Native Android Refresh Killer:
-       Fixed Viewport Layout with overscroll-behavior: none 
-       taake WebView kabhi bhi pull-to-refresh trigger na kare */
+    /* Fixed Viewport: WebView ke andar swipe-to-refresh reload bilkul block */
     html, body {
       width: 100%;
       height: 100%;
@@ -72,12 +70,12 @@
       }
     }
 
-    /* 🚀 Top Banner */
+    /* Smart Banner: Sirf Browser me aayega, App me hide rahega */
     .smart-app-banner {
+      display: none;
       background: linear-gradient(135deg, #1f2c34, #111b21);
       border-bottom: 1px solid #2a3942;
       padding: 10px 14px;
-      display: none; /* JS will show only if in normal browser */
       align-items: center;
       justify-content: space-between;
       gap: 10px;
@@ -145,8 +143,9 @@
       background: #202c33;
       border: 1px solid #2a3942;
       color: #fff;
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
+      transition: border-color 0.2s;
     }
     .input-box:focus {
       border-color: #0084ff;
@@ -172,17 +171,17 @@
 
     .btn-google {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       border-radius: 12px;
       background: #ffffff;
       color: #1f2937;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
       transition: transform 0.1s ease;
@@ -197,7 +196,7 @@
       background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23223038' fill-opacity='0.9' fill-rule='evenodd'%3E%3Cpath d='M15 12h6v6h-6zM32 8h4v4h-4zM8 42h8v8H8zM65 14a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM42 58c0-4.5 3.5-8 8-8s8 3.5 8 8-3.5 8-8 8-8-3.5-8-8zm20-38h10v3H62zm-25 42h16v2.5H37zm42 16a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-66 4h8v8h-8zm58-54l5-5 2.5 2.5-5 5zM8 70l10-6.5v13zM78 66h7v7h-7zm-4-30h12v2.5H74zm-50-4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-4 38a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm70-12l-6 6-3.5-3.5 6-6z'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* 💬 Native Chat Scrolling Container */
+    /* Native Chat Scrolling Container */
     #chat-messages {
       flex: 1 1 0%;
       min-height: 0;
@@ -211,7 +210,7 @@
       gap: 12px;
     }
 
-    /* Swipe to reply track row */
+    /* Swipe to reply row */
     .msg-swipe-row {
       position: relative;
       display: flex;
@@ -239,7 +238,6 @@
       z-index: 1;
     }
 
-    /* Message Bubbles */
     .msg-wrapper {
       display: flex;
       flex-direction: column;
@@ -251,6 +249,7 @@
       z-index: 2;
     }
 
+    /* 🔵 BLUE BUBBLE (Sent by User) */
     .bubble-sent {
       align-self: flex-end;
       background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
@@ -263,6 +262,7 @@
       word-wrap: break-word;
     }
 
+    /* ⚫ BLACK BUBBLE (Received from Others) */
     .bubble-received {
       align-self: flex-start;
       background: #000000;
@@ -309,7 +309,7 @@
       justify-content: space-between;
     }
 
-    /* Long-press / Action Modal */
+    /* Long-press Modal */
     .insta-menu-overlay {
       position: absolute;
       inset: 0;
@@ -474,13 +474,13 @@
 
   <div class="app-frame">
 
-    <!-- 🌟 TOP BANNER (Sirf Browser me dikhega, App me nahi) -->
+    <!-- 🌟 TOP BANNER (App me khud band rahega) -->
     <div id="smart-banner" class="smart-app-banner">
       <div class="banner-left">
         <div class="banner-icon"><i class="fa-solid fa-mask"></i></div>
         <div>
           <h4 style="font-size: 13px; font-weight: 700;">DCP Confessions</h4>
-          <p style="font-size: 11px; color: #8696a0;">Official App Available</p>
+          <p style="font-size: 11px; color: #8696a0;">Get official Android app</p>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -493,20 +493,42 @@
       </div>
     </div>
 
-    <!-- SCREEN 1: LOGIN (Genuine Google Login Primary) -->
-    <div id="screen-1" class="screen active" style="justify-content: center; padding: 0 30px;">
-      <div style="text-align: center; margin-bottom: 28px;">
-        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc); border-radius: 22px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(67, 100, 247, 0.4);">
-          <i class="fa-solid fa-mask" style="font-size: 28px; color: #fff;"></i>
+    <!-- SCREEN 1: LOGIN (Manual Email + Google Both Available) -->
+    <div id="screen-1" class="screen active" style="justify-content: center; padding: 0 26px;">
+      <div style="text-align: center; margin-bottom: 22px;">
+        <div style="width: 65px; height: 65px; background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc); border-radius: 20px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(67, 100, 247, 0.4);">
+          <i class="fa-solid fa-mask" style="font-size: 26px; color: #fff;"></i>
         </div>
-        <h1 style="font-size: 24px; font-weight: 800; color: #fff;">DCP Confessions</h1>
-        <p style="font-size: 13px; color: #8696a0; margin-top: 4px;">100% Anonymous • Secret • Encrypted</p>
+        <h1 style="font-size: 23px; font-weight: 800; color: #fff;">DCP Confessions</h1>
+        <p style="font-size: 12px; color: #8696a0; margin-top: 3px;">100% Anonymous • Secret • Encrypted</p>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 14px;">
-        <!-- GOOGLE LOGIN BUTTON (Original Real Google Auth) -->
+        
+        <!-- 📧 MANUAL EMAIL INPUT SECTION (Direct Login without OTP) -->
+        <div>
+          <label style="display: block; font-size: 11px; text-transform: uppercase; color: #8696a0; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 7px;">
+            Enter Your Email
+          </label>
+          <input type="text" id="email-field" placeholder="student@example.com" class="input-box">
+          <p id="returning-user-hint" style="font-size: 11px; color: #38bdf8; margin-top: 5px; display: none;">
+            <i class="fa-solid fa-circle-check"></i> Account found! Entering room...
+          </p>
+        </div>
+
+        <button type="button" id="btn-login-continue" class="btn-primary">
+          Continue
+        </button>
+
+        <div style="display: flex; align-items: center; margin: 2px 0;">
+          <div style="flex: 1; height: 1px; background: #222d34;"></div>
+          <span style="padding: 0 10px; font-size: 11px; color: #64748b; font-weight: 700;">OR</span>
+          <div style="flex: 1; height: 1px; background: #222d34;"></div>
+        </div>
+
+        <!-- 🌐 GOOGLE BUTTON -->
         <button type="button" id="btn-google-login" class="btn-google">
-          <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24">
+          <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.36 7.31 24 12 24z"/>
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.27C.46 8.2.0 10.04.0 12s.46 3.8 1.27 5.42l4.01-3.15z"/>
@@ -515,11 +537,7 @@
           <span>Continue with Google</span>
         </button>
 
-        <p id="login-status-msg" style="text-align: center; font-size: 12px; color: #38bdf8; min-height: 16px;"></p>
-        
-        <p style="text-align: center; font-size: 11px; color: #64748b; line-height: 1.4;">
-          Aapka real email kisi ko nazar nahi aayega.<br>Sirf aapki Anonymous ID show hogi.
-        </p>
+        <p id="login-status-msg" style="text-align: center; font-size: 11px; color: #38bdf8; min-height: 14px;"></p>
       </div>
     </div>
 
@@ -569,12 +587,11 @@
         </div>
       </div>
 
-      <!-- Messages Area: Fully Native Scrollable -->
+      <!-- Messages Area -->
       <div id="chat-messages"></div>
 
-      <!-- Down Nav & Input Container -->
+      <!-- Bottom Nav & Input -->
       <div class="down-nav-container">
-        <!-- Reply Target Preview Bar -->
         <div id="replying-bar">
           <div>
             <span id="replying-to-name" style="font-size: 11px; font-weight: 700; color: #0084ff; display: block;"></span>
@@ -616,7 +633,7 @@
       </div>
     </div>
 
-    <!-- Long-press Instagram Action Modal -->
+    <!-- Long-press Menu Modal -->
     <div id="insta-menu-modal" class="insta-menu-overlay" onclick="closeInstaMenu(event)">
       <div class="insta-modal-container" onclick="event.stopPropagation()">
         
@@ -686,7 +703,7 @@
         </div>
         <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Active in Chat</h3>
         <p id="modal-active-count" style="font-size: 22px; font-weight: 800; color: #22c55e; margin: 8px 0;">1 Active User</p>
-        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Log jo is waqt confession room mein online mojood hain.</p>
+        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Users online right now.</p>
         <button type="button" onclick="closeModal('active-modal')" style="width: 100%; padding: 12px; background: #2a3942; color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">Dismiss</button>
       </div>
     </div>
@@ -701,11 +718,11 @@
 
     <div id="me-modal" class="modal-overlay">
       <div class="modal-card" style="text-align: center;">
-        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8696a0; display: block; margin-bottom: 14px;">Your Anonymous Identity</span>
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8696a0; display: block; margin-bottom: 14px;">Your Permanent Identity</span>
         <div style="display: inline-block; padding: 4px 16px; background: #111b21; border: 1px solid #2a3942; border-radius: 20px; margin-bottom: 10px;">
           <span id="me-user-id" style="font-size: 15px; font-weight: 800; color: #38bdf8; font-family: monospace;">User #1</span>
         </div>
-        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Yeh permanent identity aapke Google account ke saath linked hai.</p>
+        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Yeh permanent identity aapke is email ke sath lock hai.</p>
         <button type="button" onclick="closeModal('me-modal')" style="width: 100%; padding: 12px; background: #0084ff; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">Done</button>
       </div>
     </div>
@@ -713,19 +730,18 @@
   </div>
 
   <script>
-    // 📱 Check if running inside App / WebView
-    function isRunningInApp() {
-      const ua = navigator.userAgent || navigator.vendor || window.opera;
-      const isWebView = /wv|Android.*Version\/[0-9.]* Chrome|WebIntoApp/i.test(ua);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-      const isCustomFlag = new URLSearchParams(window.location.search).get('app') === 'true';
-      return isWebView || isStandalone || isCustomFlag;
+    /* 🛡️ App & WebView Detection: "Get App" Banner sirf browser me show hoga */
+    function checkIsInsideApp() {
+      const ua = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
+      const isWebView = ua.includes('wv') || ua.includes('webintoapp') || (ua.includes('android') && ua.includes('version/'));
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const isQueryFlag = window.location.search.includes('app=true') || window.location.search.includes('source=apk');
+      return isWebView || isStandalone || isQueryFlag;
     }
 
-    // App ke andar banner show na ho
     window.addEventListener('DOMContentLoaded', () => {
       const banner = document.getElementById('smart-banner');
-      if (banner && !isRunningInApp()) {
+      if (banner && !checkIsInsideApp()) {
         banner.style.display = 'flex';
       }
     });
@@ -752,8 +768,6 @@
     import { 
       getAuth, 
       signInWithPopup,
-      signInWithRedirect,
-      getRedirectResult,
       GoogleAuthProvider, 
       onAuthStateChanged, 
       signOut 
@@ -791,8 +805,8 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    let activeEmail = '';
     let currentUser = null;
-    let authUser = null;
     let unsubscribeChat = null;
     let unsubscribePresence = null;
     let presenceHeartbeat = null;
@@ -813,89 +827,121 @@
       if (target) target.classList.add('active');
     }
 
-    // 🔒 AUTH STATE OBSERVER (Session never resets on reload)
+    // 🚀 Auto-Login: Last active email se seedha login bina screen 1 ke
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const lastEmail = localStorage.getItem('dcp_last_active_email');
+        if (lastEmail) {
+          document.getElementById('email-field').value = lastEmail;
+          document.getElementById('returning-user-hint').style.display = 'block';
+          await loginUser(lastEmail);
+        }
+      } catch (e) {
+        console.error("Auto login error:", e);
+      }
+    });
+
     onAuthStateChanged(auth, async (user) => {
       if (user && user.email) {
-        authUser = user;
-        document.getElementById('login-status-msg').innerText = "Logging in...";
-        await processUserRecord(user.email, user.displayName || '');
-      } else {
-        authUser = null;
-        currentUser = null;
-        showScreen(1);
+        await loginUser(user.email, user.displayName || '');
       }
     });
 
-    // Check redirect login results (for WebViews)
-    getRedirectResult(auth).catch((error) => {
-      console.warn("Redirect sign in error: ", error);
+    // 📧 MANUAL EMAIL SUBMIT (Zubani yaad email se Direct Login bina OTP ke)
+    async function handleManualEmailContinue() {
+      const input = document.getElementById('email-field');
+      let val = input.value.trim().toLowerCase();
+      if (!val) {
+        alert("Pehle apna email enter karein!");
+        return;
+      }
+      if (!val.includes('@')) {
+        val = val.replace(/\s+/g, '') + '@gmail.com';
+      }
+      await loginUser(val);
+    }
+
+    document.getElementById('btn-login-continue').addEventListener('click', handleManualEmailContinue);
+    document.getElementById('email-field').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleManualEmailContinue();
     });
 
-    // 🚀 REAL GOOGLE AUTH TRIGGER
-    const googleBtn = document.getElementById('btn-google-login');
-    googleBtn.addEventListener('click', async () => {
+    // 🌐 GOOGLE LOGIN BUTTON
+    document.getElementById('btn-google-login').addEventListener('click', async () => {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
-      document.getElementById('login-status-msg').innerText = "Connecting to Google...";
+      document.getElementById('login-status-msg').innerText = "Opening Google accounts...";
 
       try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.warn("Popup blocked or failed, trying redirect...", err);
-        try {
-          await signInWithRedirect(auth, provider);
-        } catch (redirectErr) {
-          alert("Google Sign-In Error: " + redirectErr.message);
-          document.getElementById('login-status-msg').innerText = "";
+        const result = await signInWithPopup(auth, provider);
+        if (result && result.user && result.user.email) {
+          await loginUser(result.user.email, result.user.displayName || '');
         }
+      } catch (err) {
+        console.warn("Google popup error:", err);
+        document.getElementById('login-status-msg').innerText = "Email upar enter karke Continue dabayein.";
       }
     });
 
-    async function processUserRecord(email, suggestedName) {
-      const docId = sanitizeDocId(email);
+    // 🔒 PUKHTA IDENTITY SYSTEM: User ID Lock Mechanism
+    async function loginUser(email, suggestedName = '') {
+      activeEmail = email.toLowerCase().trim();
+      localStorage.setItem('dcp_last_active_email', activeEmail);
+
+      const docId = sanitizeDocId(activeEmail);
       const userRef = doc(db, "users", docId);
 
       try {
         const snap = await getDoc(userRef);
         if (snap.exists()) {
+          // Returning User: Iska purana User ID hi rahega (Jaise User 7)
           currentUser = snap.data();
           document.getElementById('me-user-id').innerText = currentUser.userId;
           showScreen(3);
           initRealtimeRoom();
           startPresenceTracking();
         } else {
+          // Brand New User: Nickname select karega
           if (suggestedName) {
             document.getElementById('user-display-name').value = suggestedName;
           }
           showScreen(2);
         }
       } catch (err) {
-        console.error(err);
         showScreen(2);
       }
     }
 
-    // Save profile on first sign up
+    // Save profile for brand new user only
     async function saveAndEnterRoom() {
-      if (!authUser) return;
       const nameInput = document.getElementById('user-display-name');
       let name = nameInput.value.trim();
       const age = document.getElementById('user-age-select').value;
       if (!name) name = "Anonymous " + Math.floor(Math.random() * 80 + 10);
 
       try {
-        const usersSnapshot = await getDocs(collection(db, "users"));
-        const assignedId = "User #" + (usersSnapshot.size + 1);
+        const docId = sanitizeDocId(activeEmail);
+        const userRef = doc(db, "users", docId);
+        const existingSnap = await getDoc(userRef);
+
+        let assignedId = "";
+        if (existingSnap.exists()) {
+          // Agar ghalti se dobara save dabaye toh purani ID hi rahe
+          assignedId = existingSnap.data().userId;
+        } else {
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          assignedId = "User #" + (usersSnapshot.size + 1);
+        }
 
         const userData = {
-          email: authUser.email,
+          email: activeEmail,
           name: name,
           age: age,
           userId: assignedId,
           createdAt: serverTimestamp()
         };
 
-        await setDoc(doc(db, "users", sanitizeDocId(authUser.email)), userData);
+        await setDoc(userRef, userData);
         currentUser = userData;
         document.getElementById('me-user-id').innerText = assignedId;
 
@@ -903,12 +949,12 @@
         initRealtimeRoom();
         startPresenceTracking();
       } catch (err) {
-        alert("Firestore save error: " + err.message);
+        alert("Firestore error: " + err.message);
       }
     }
     document.getElementById('btn-save-profile').addEventListener('click', saveAndEnterRoom);
 
-    // Online Status Tracking
+    // Online Presence
     async function updatePresenceStatus() {
       if (!currentUser) return;
       const docRef = doc(db, "online_users", sanitizeDocId(currentUser.email));
@@ -961,7 +1007,7 @@
     window.addEventListener('beforeunload', removePresenceStatus);
     window.addEventListener('pagehide', removePresenceStatus);
 
-    // 💬 REALTIME CHAT WITH SWIPE TO REPLY
+    // 💬 CHAT SYSTEM (Strict "isMe" Check taake User 7 & User 8 aapas me mix na hon)
     function initRealtimeRoom() {
       if (unsubscribeChat) unsubscribeChat();
       isInitialChatLoad = true;
@@ -977,20 +1023,19 @@
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
           const docId = docSnap.id;
-          const isMe = currentUser && (data.senderEmail === currentUser.email || data.senderId === currentUser.userId);
 
-          // Row Container
+          // 🎯 STRICT IS-ME CHECK: Sirf wahi message right side (blue) aayega jo isi account se gaya ho
+          const isMe = currentUser && (data.senderEmail.toLowerCase() === currentUser.email.toLowerCase());
+
           const row = document.createElement('div');
           row.className = 'msg-swipe-row';
           row.style.justifyContent = isMe ? 'flex-end' : 'flex-start';
 
-          // Reply Icon behind bubble
           const replyIcon = document.createElement('div');
           replyIcon.className = 'swipe-reply-icon';
           replyIcon.innerHTML = '<i class="fa-solid fa-reply"></i>';
           row.appendChild(replyIcon);
 
-          // Bubble Wrapper
           const wrapper = document.createElement('div');
           wrapper.className = 'msg-wrapper';
           wrapper.style.alignItems = isMe ? 'flex-end' : 'flex-start';
@@ -1034,7 +1079,7 @@
             }
           }
 
-          // 📲 SWIPE TO REPLY TOUCH LOGIC
+          // SWIPE TO REPLY GESTURE
           let startX = 0;
           let startY = 0;
           let currentX = 0;
@@ -1048,11 +1093,8 @@
             currentX = startX;
             isSwiping = false;
 
-            // Long Press (open menu)
             longPressTimer = setTimeout(() => {
-              if (!isSwiping) {
-                openInstaMenu(docId, data, isMe);
-              }
+              if (!isSwiping) openInstaMenu(docId, data, isMe);
             }, 550);
           }, { passive: true });
 
@@ -1061,13 +1103,12 @@
             const diffX = touch.clientX - startX;
             const diffY = touch.clientY - startY;
 
-            // Horizontal Swipe Check
             if (Math.abs(diffX) > Math.abs(diffY) && diffX > 10) {
               isSwiping = true;
               clearTimeout(longPressTimer);
               currentX = touch.clientX;
 
-              const translateX = Math.min(diffX * 0.45, 70); // Friction
+              const translateX = Math.min(diffX * 0.45, 70);
               wrapper.style.transform = `translateX(${translateX}px)`;
 
               if (translateX > 35) {
@@ -1085,18 +1126,15 @@
             const diffX = currentX - startX;
 
             if (diffX > 60) {
-              // Trigger Reply
               if (navigator.vibrate) navigator.vibrate(35);
               setReplyTarget(data.senderId, data.text);
             }
 
-            // Reset Animation
             wrapper.style.transform = 'translateX(0px)';
             replyIcon.style.opacity = '0';
             replyIcon.style.transform = 'scale(0.5)';
           });
 
-          // Desktop right-click
           wrapper.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             openInstaMenu(docId, data, isMe);
@@ -1124,7 +1162,6 @@
 
     function openInstaMenu(docId, data, isMe) {
       selectedMsgData = { id: docId, ...data };
-
       const unsendBtn = document.getElementById('action-unsend-btn');
       const reportBtn = document.getElementById('action-report-btn');
 
@@ -1230,7 +1267,7 @@
       if (!text) return;
 
       const senderId = currentUser ? currentUser.userId : "User #1";
-      const senderEmail = currentUser ? currentUser.email : authUser.email;
+      const senderEmail = currentUser ? currentUser.email : activeEmail;
       input.value = '';
 
       const confessionData = {
@@ -1263,8 +1300,9 @@
       if (unsubscribeChat) unsubscribeChat();
       if (unsubscribePresence) unsubscribePresence();
       await signOut(auth);
+      localStorage.removeItem('dcp_last_active_email');
       currentUser = null;
-      authUser = null;
+      activeEmail = '';
       closeModal('setting-modal');
       showScreen(1);
     };
