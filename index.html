@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <!-- 🔍 Google Search (SEO) Tags -->
   <title>DCP Confessions | Secret Anonymous Confession Room</title>
-  <meta name="description" content="Official DCP Confession page. Share your confessions 100% anonymously, secretly and encrypted. DCP Student confession room.">
-  <meta name="keywords" content="DCP confession, DCP confessions, DCP student confession, DCP anonymous, dcp confession page">
+  <meta name="description" content="Official DCP Confession page. Share your confessions 100% anonymously, secretly and encrypted.">
+  <meta name="keywords" content="DCP confession, DCP confessions, DCP student confession, DCP anonymous">
   <meta name="author" content="Umer ABDULLAH">
   <meta name="robots" content="index, follow">
   
@@ -31,31 +30,26 @@
       user-select: text !important;
     }
 
-    /* 🛡️ Native Android Refresh Killer Layout:
-       HTML & Body ko halka sa extra height de kar window.scrollY > 0 rakhte hain 
-       taake Android ka SwipeRefreshLayout kabhi trigger na ho sake */
-    html {
+    /* 🛡️ Native Android Refresh Killer:
+       Fixed Viewport Layout with overscroll-behavior: none 
+       taake WebView kabhi bhi pull-to-refresh trigger na kare */
+    html, body {
       width: 100%;
       height: 100%;
-      overflow-y: scroll !important;
-      background-color: #000;
-    }
-
-    body {
-      width: 100%;
-      min-height: calc(100% + 60px) !important;
+      overflow: hidden;
+      position: fixed;
       background-color: #000;
       color: #fff;
-      overflow-y: scroll !important;
+      overscroll-behavior: none;
+      touch-action: pan-y;
     }
 
-    /* UI frame ko fixed rakha hai taake background scroll bilkul nazar na aaye */
     .app-frame {
-      position: fixed !important;
-      top: 0 !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       width: 100%;
       max-width: 440px;
       margin: 0 auto;
@@ -69,21 +63,21 @@
 
     @media (min-width: 640px) {
       .app-frame {
-        top: 3% !important;
-        bottom: 3% !important;
-        height: 94% !important;
+        top: 3%;
+        bottom: 3%;
+        height: 94%;
         border-radius: 28px;
         border: 1px solid #222d34;
         box-shadow: 0 20px 40px rgba(0,0,0,0.8);
       }
     }
 
-    /* 🚀 Top Banner: Direct APK Download Link */
+    /* 🚀 Top Banner */
     .smart-app-banner {
       background: linear-gradient(135deg, #1f2c34, #111b21);
       border-bottom: 1px solid #2a3942;
       padding: 10px 14px;
-      display: flex;
+      display: none; /* JS will show only if in normal browser */
       align-items: center;
       justify-content: space-between;
       gap: 10px;
@@ -169,6 +163,7 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 132, 255, 0.35);
+      transition: transform 0.1s ease;
     }
     .btn-primary:active {
       transform: scale(0.98);
@@ -177,18 +172,24 @@
 
     .btn-google {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       border-radius: 12px;
       background: #ffffff;
       color: #1f2937;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+      transition: transform 0.1s ease;
+    }
+    .btn-google:active {
+      transform: scale(0.98);
+      background: #f1f5f9;
     }
 
     .whatsapp-doodle-bg {
@@ -196,28 +197,58 @@
       background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23223038' fill-opacity='0.9' fill-rule='evenodd'%3E%3Cpath d='M15 12h6v6h-6zM32 8h4v4h-4zM8 42h8v8H8zM65 14a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM42 58c0-4.5 3.5-8 8-8s8 3.5 8 8-3.5 8-8 8-8-3.5-8-8zm20-38h10v3H62zm-25 42h16v2.5H37zm42 16a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-66 4h8v8h-8zm58-54l5-5 2.5 2.5-5 5zM8 70l10-6.5v13zM78 66h7v7h-7zm-4-30h12v2.5H74zm-50-4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-4 38a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm70-12l-6 6-3.5-3.5 6-6z'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* 💬 Smooth Native Scrolling Chat Container */
+    /* 💬 Native Chat Scrolling Container */
     #chat-messages {
       flex: 1 1 0%;
       min-height: 0;
       overflow-y: scroll !important;
       -webkit-overflow-scrolling: touch !important;
-      touch-action: pan-y !important;
       overscroll-behavior-y: contain;
+      touch-action: pan-y !important;
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
+    /* Swipe to reply track row */
+    .msg-swipe-row {
+      position: relative;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      touch-action: pan-y;
+    }
+
+    .swipe-reply-icon {
+      position: absolute;
+      left: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #0084ff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.15s, transform 0.15s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
     /* Message Bubbles */
     .msg-wrapper {
       display: flex;
       flex-direction: column;
-      max-width: 82%;
+      max-width: 84%;
       position: relative;
       cursor: pointer;
       flex-shrink: 0;
+      transition: transform 0.12s ease-out;
+      z-index: 2;
     }
 
     .bubble-sent {
@@ -228,7 +259,7 @@
       border-radius: 18px 18px 4px 18px;
       font-size: 14px;
       line-height: 1.4;
-      box-shadow: 0 0 15px rgba(67, 100, 247, 0.5);
+      box-shadow: 0 0 15px rgba(67, 100, 247, 0.4);
       word-wrap: break-word;
     }
 
@@ -246,7 +277,7 @@
     }
 
     .replied-box {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
       border-left: 3px solid #38bdf8;
       border-radius: 6px;
       padding: 5px 8px;
@@ -278,7 +309,7 @@
       justify-content: space-between;
     }
 
-    /* Instagram Action Modal */
+    /* Long-press / Action Modal */
     .insta-menu-overlay {
       position: absolute;
       inset: 0;
@@ -443,13 +474,13 @@
 
   <div class="app-frame">
 
-    <!-- 🌟 TOP BANNER: Direct Download (app-release.apk) -->
+    <!-- 🌟 TOP BANNER (Sirf Browser me dikhega, App me nahi) -->
     <div id="smart-banner" class="smart-app-banner">
       <div class="banner-left">
         <div class="banner-icon"><i class="fa-solid fa-mask"></i></div>
         <div>
           <h4 style="font-size: 13px; font-weight: 700;">DCP Confessions</h4>
-          <p style="font-size: 11px; color: #8696a0;">Get the official app</p>
+          <p style="font-size: 11px; color: #8696a0;">Official App Available</p>
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -457,42 +488,25 @@
           <i class="fa-solid fa-download"></i> Get App
         </a>
         <button type="button" onclick="dismissBanner()" class="btn-continue-browser">
-          Browser
+          Close
         </button>
       </div>
     </div>
 
-    <!-- SCREEN 1: LOGIN -->
+    <!-- SCREEN 1: LOGIN (Genuine Google Login Primary) -->
     <div id="screen-1" class="screen active" style="justify-content: center; padding: 0 30px;">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="width: 65px; height: 65px; background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc); border-radius: 20px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(67, 100, 247, 0.4);">
-          <i class="fa-solid fa-mask" style="font-size: 26px; color: #fff;"></i>
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc); border-radius: 22px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(67, 100, 247, 0.4);">
+          <i class="fa-solid fa-mask" style="font-size: 28px; color: #fff;"></i>
         </div>
-        <h1 style="font-size: 24px; font-weight: 700; color: #fff;">DCP Confessions</h1>
+        <h1 style="font-size: 24px; font-weight: 800; color: #fff;">DCP Confessions</h1>
         <p style="font-size: 13px; color: #8696a0; margin-top: 4px;">100% Anonymous • Secret • Encrypted</p>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div>
-          <label style="display: block; font-size: 11px; text-transform: uppercase; color: #8696a0; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 8px;">Enter your email</label>
-          <input type="text" id="email-field" placeholder="student@example.com" class="input-box">
-          <p id="returning-user-hint" style="font-size: 11px; color: #38bdf8; margin-top: 5px; display: none;">
-            <i class="fa-solid fa-circle-check"></i> Pehchan liya! Opening your room...
-          </p>
-        </div>
-
-        <button type="button" id="btn-login-continue" class="btn-primary">
-          Continue
-        </button>
-
-        <div style="display: flex; align-items: center; margin: 6px 0;">
-          <div style="flex: 1; height: 1px; background: #222d34;"></div>
-          <span style="padding: 0 10px; font-size: 11px; color: #64748b; font-weight: 700;">OR</span>
-          <div style="flex: 1; height: 1px; background: #222d34;"></div>
-        </div>
-
+        <!-- GOOGLE LOGIN BUTTON (Original Real Google Auth) -->
         <button type="button" id="btn-google-login" class="btn-google">
-          <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
+          <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.27v3.15C3.25 21.36 7.31 24 12 24z"/>
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.27C.46 8.2.0 10.04.0 12s.46 3.8 1.27 5.42l4.01-3.15z"/>
@@ -500,6 +514,12 @@
           </svg>
           <span>Continue with Google</span>
         </button>
+
+        <p id="login-status-msg" style="text-align: center; font-size: 12px; color: #38bdf8; min-height: 16px;"></p>
+        
+        <p style="text-align: center; font-size: 11px; color: #64748b; line-height: 1.4;">
+          Aapka real email kisi ko nazar nahi aayega.<br>Sirf aapki Anonymous ID show hogi.
+        </p>
       </div>
     </div>
 
@@ -549,9 +569,8 @@
         </div>
       </div>
 
-      <!-- Messages Area: Fully Scrollable in App -->
-      <div id="chat-messages">
-      </div>
+      <!-- Messages Area: Fully Native Scrollable -->
+      <div id="chat-messages"></div>
 
       <!-- Down Nav & Input Container -->
       <div class="down-nav-container">
@@ -565,7 +584,7 @@
         </div>
 
         <div style="padding: 6px 12px; background: #1f2c34; display: flex; align-items: center; gap: 8px;">
-          <input type="text" id="confession-input" placeholder="Hold message for reactions / reply..." 
+          <input type="text" id="confession-input" placeholder="Swipe message right to reply..." 
                  style="flex: 1; padding: 10px 16px; border-radius: 20px; background: #111b21; border: 1px solid #2a3942; color: #fff; font-size: 14px; outline: none;">
           <button type="button" id="btn-send-confession" style="width: 38px; height: 38px; border-radius: 50%; background: #0084ff; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
             <i class="fa-solid fa-paper-plane" style="font-size: 13px;"></i>
@@ -580,7 +599,6 @@
             <i class="fa-solid fa-user-tie"></i><span>Personal</span>
           </button>
           
-          <!-- REAL-TIME LIVE ACTIVE COUNT -->
           <button type="button" onclick="openModal('active-modal')" class="nav-btn">
             <i class="fa-solid fa-users"></i><span class="dot-green"></span>
             <span id="nav-active-count" style="color: #22c55e; font-weight: 700;">1 Active</span>
@@ -598,11 +616,10 @@
       </div>
     </div>
 
-    <!-- ================= INSTAGRAM-STYLE ACTION MODAL ================= -->
+    <!-- Long-press Instagram Action Modal -->
     <div id="insta-menu-modal" class="insta-menu-overlay" onclick="closeInstaMenu(event)">
       <div class="insta-modal-container" onclick="event.stopPropagation()">
         
-        <!-- Reactions Bar -->
         <div class="insta-reactions-bar">
           <span class="reaction-btn" onclick="sendReaction('❤️')">❤️</span>
           <span class="reaction-btn" onclick="sendReaction('😂')">😂</span>
@@ -612,9 +629,8 @@
           <span class="reaction-btn" onclick="sendReaction('👍')">👍</span>
         </div>
 
-        <!-- Action Items List -->
         <div class="insta-actions-list">
-          <div class="insta-action-item" onclick="triggerReply()">
+          <div class="insta-action-item" onclick="triggerReplyFromModal()">
             <span>Reply</span>
             <i class="fa-solid fa-reply"></i>
           </div>
@@ -670,7 +686,7 @@
         </div>
         <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Active in Chat</h3>
         <p id="modal-active-count" style="font-size: 22px; font-weight: 800; color: #22c55e; margin: 8px 0;">1 Active User</p>
-        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Jo log is waqt chat room mein live online mojood hain.</p>
+        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Log jo is waqt confession room mein online mojood hain.</p>
         <button type="button" onclick="closeModal('active-modal')" style="width: 100%; padding: 12px; background: #2a3942; color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">Dismiss</button>
       </div>
     </div>
@@ -678,18 +694,18 @@
     <div id="notice-modal" class="modal-overlay">
       <div class="modal-card">
         <h3 style="font-size: 15px; font-weight: 800; color: #ef4444; margin-bottom: 12px;">Community Guidelines</h3>
-        <p style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">Zero tolerance: Harassment, vulgarity or revealing names is strictly forbidden. <strong>Messages receiving 5 reports are automatically deleted.</strong></p>
+        <p style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">Zero tolerance: Harassment, vulgarity ya names reveal karna strictly mana hai. <strong>5 reports hone par message auto-delete ho jayega.</strong></p>
         <button type="button" onclick="closeModal('notice-modal')" style="width: 100%; margin-top: 18px; padding: 12px; background: #ef4444; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">I Agree</button>
       </div>
     </div>
 
     <div id="me-modal" class="modal-overlay">
       <div class="modal-card" style="text-align: center;">
-        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8696a0; display: block; margin-bottom: 14px;">Your Permanent Anonymous Identity</span>
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8696a0; display: block; margin-bottom: 14px;">Your Anonymous Identity</span>
         <div style="display: inline-block; padding: 4px 16px; background: #111b21; border: 1px solid #2a3942; border-radius: 20px; margin-bottom: 10px;">
           <span id="me-user-id" style="font-size: 15px; font-weight: 800; color: #38bdf8; font-family: monospace;">User #1</span>
         </div>
-        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Yeh ID aapke is email ke saath hamesha ke liye link ho chuki hai.</p>
+        <p style="font-size: 12px; color: #8696a0; margin-bottom: 16px;">Yeh permanent identity aapke Google account ke saath linked hai.</p>
         <button type="button" onclick="closeModal('me-modal')" style="width: 100%; padding: 12px; background: #0084ff; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">Done</button>
       </div>
     </div>
@@ -697,10 +713,26 @@
   </div>
 
   <script>
+    // 📱 Check if running inside App / WebView
+    function isRunningInApp() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isWebView = /wv|Android.*Version\/[0-9.]* Chrome|WebIntoApp/i.test(ua);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+      const isCustomFlag = new URLSearchParams(window.location.search).get('app') === 'true';
+      return isWebView || isStandalone || isCustomFlag;
+    }
+
+    // App ke andar banner show na ho
+    window.addEventListener('DOMContentLoaded', () => {
+      const banner = document.getElementById('smart-banner');
+      if (banner && !isRunningInApp()) {
+        banner.style.display = 'flex';
+      }
+    });
+
     function dismissBanner() {
-      document.getElementById('smart-banner').style.display = 'none';
-      const emailField = document.getElementById('email-field');
-      if (emailField) emailField.focus();
+      const banner = document.getElementById('smart-banner');
+      if (banner) banner.style.display = 'none';
     }
 
     function openModal(id) {
@@ -712,31 +744,20 @@
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     }
-
-    /* 🛡️ ANDROID SWIPEREFRESH DHOKA MECHANISM (100% REFRESH KILLER):
-       Android WebView canScrollVertically(-1) ko hamesha 'true' rakhta hai taake 
-       Android native system ko lage user pehle se scroll kar raha hai aur reload na ho */
-    function keepAndroidDeceived() {
-      if (window.scrollY < 20 || window.scrollY > 30) {
-        window.scrollTo(0, 25);
-      }
-    }
-    window.addEventListener('load', keepAndroidDeceived);
-    window.addEventListener('scroll', keepAndroidDeceived);
-    setInterval(keepAndroidDeceived, 800);
-
-    /* Chat top boundary trick taake top par overscroll bounce native APK ko na mile */
-    const chatBox = document.getElementById('chat-messages');
-    chatBox.addEventListener('scroll', function() {
-      if (chatBox.scrollTop === 0) {
-        chatBox.scrollTop = 1;
-      }
-    });
   </script>
 
-  <!-- FIREBASE ADVANCED CHAT & REALTIME PRESENCE SCRIPT -->
+  <!-- FIREBASE AUTH & CHAT LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithPopup,
+      signInWithRedirect,
+      getRedirectResult,
+      GoogleAuthProvider, 
+      onAuthStateChanged, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
     import { 
       getFirestore, 
       collection, 
@@ -767,10 +788,11 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let activeEmail = '';
     let currentUser = null;
+    let authUser = null;
     let unsubscribeChat = null;
     let unsubscribePresence = null;
     let presenceHeartbeat = null;
@@ -791,39 +813,45 @@
       if (target) target.classList.add('active');
     }
 
-    // 🚀 AUTO LOGIN / SESSION PRESERVED
-    window.addEventListener('DOMContentLoaded', async () => {
+    // 🔒 AUTH STATE OBSERVER (Session never resets on reload)
+    onAuthStateChanged(auth, async (user) => {
+      if (user && user.email) {
+        authUser = user;
+        document.getElementById('login-status-msg').innerText = "Logging in...";
+        await processUserRecord(user.email, user.displayName || '');
+      } else {
+        authUser = null;
+        currentUser = null;
+        showScreen(1);
+      }
+    });
+
+    // Check redirect login results (for WebViews)
+    getRedirectResult(auth).catch((error) => {
+      console.warn("Redirect sign in error: ", error);
+    });
+
+    // 🚀 REAL GOOGLE AUTH TRIGGER
+    const googleBtn = document.getElementById('btn-google-login');
+    googleBtn.addEventListener('click', async () => {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      document.getElementById('login-status-msg').innerText = "Connecting to Google...";
+
       try {
-        const lastEmail = localStorage.getItem('dcp_last_active_email');
-        if (lastEmail) {
-          document.getElementById('email-field').value = lastEmail;
-          document.getElementById('returning-user-hint').style.display = 'block';
-          await loginUser(lastEmail);
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.warn("Popup blocked or failed, trying redirect...", err);
+        try {
+          await signInWithRedirect(auth, provider);
+        } catch (redirectErr) {
+          alert("Google Sign-In Error: " + redirectErr.message);
+          document.getElementById('login-status-msg').innerText = "";
         }
-      } catch (e) {
-        console.error("Auto login error:", e);
       }
     });
 
-    async function handleContinueBtn() {
-      const input = document.getElementById('email-field');
-      let val = input.value.trim().toLowerCase();
-      if (!val) {
-        val = 'user' + Math.floor(Math.random() * 800 + 100) + '@gmail.com';
-      } else if (!val.includes('@')) {
-        val = val.replace(/\s+/g, '') + '@gmail.com';
-      }
-      await loginUser(val);
-    }
-    document.getElementById('btn-login-continue').addEventListener('click', handleContinueBtn);
-    document.getElementById('email-field').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleContinueBtn();
-    });
-
-    async function loginUser(email, suggestedName = '') {
-      activeEmail = email;
-      localStorage.setItem('dcp_last_active_email', email);
-
+    async function processUserRecord(email, suggestedName) {
       const docId = sanitizeDocId(email);
       const userRef = doc(db, "users", docId);
 
@@ -836,15 +864,20 @@
           initRealtimeRoom();
           startPresenceTracking();
         } else {
-          if (suggestedName) document.getElementById('user-display-name').value = suggestedName;
+          if (suggestedName) {
+            document.getElementById('user-display-name').value = suggestedName;
+          }
           showScreen(2);
         }
       } catch (err) {
+        console.error(err);
         showScreen(2);
       }
     }
 
+    // Save profile on first sign up
     async function saveAndEnterRoom() {
+      if (!authUser) return;
       const nameInput = document.getElementById('user-display-name');
       let name = nameInput.value.trim();
       const age = document.getElementById('user-age-select').value;
@@ -855,14 +888,14 @@
         const assignedId = "User #" + (usersSnapshot.size + 1);
 
         const userData = {
-          email: activeEmail,
+          email: authUser.email,
           name: name,
           age: age,
           userId: assignedId,
           createdAt: serverTimestamp()
         };
 
-        await setDoc(doc(db, "users", sanitizeDocId(activeEmail)), userData);
+        await setDoc(doc(db, "users", sanitizeDocId(authUser.email)), userData);
         currentUser = userData;
         document.getElementById('me-user-id').innerText = assignedId;
 
@@ -870,12 +903,12 @@
         initRealtimeRoom();
         startPresenceTracking();
       } catch (err) {
-        alert("Firestore save error!");
+        alert("Firestore save error: " + err.message);
       }
     }
     document.getElementById('btn-save-profile').addEventListener('click', saveAndEnterRoom);
 
-    // 🔥 REAL-TIME ONLINE PRESENCE SYSTEM (+1 / -1)
+    // Online Status Tracking
     async function updatePresenceStatus() {
       if (!currentUser) return;
       const docRef = doc(db, "online_users", sanitizeDocId(currentUser.email));
@@ -928,7 +961,7 @@
     window.addEventListener('beforeunload', removePresenceStatus);
     window.addEventListener('pagehide', removePresenceStatus);
 
-    // 💬 REALTIME CHAT (Ab Purani Chats Free Scroll Hongi)
+    // 💬 REALTIME CHAT WITH SWIPE TO REPLY
     function initRealtimeRoom() {
       if (unsubscribeChat) unsubscribeChat();
       isInitialChatLoad = true;
@@ -937,7 +970,6 @@
       const q = query(collection(db, "confessions"), orderBy("createdAt", "asc"), limit(120));
 
       unsubscribeChat = onSnapshot(q, (snapshot) => {
-        // Agar user upar scroll karke purani chats parh raha hai to usko wapas neeche mat kheencho
         const isUserNearBottom = (chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight) < 180;
 
         chatArea.innerHTML = '';
@@ -947,9 +979,20 @@
           const docId = docSnap.id;
           const isMe = currentUser && (data.senderEmail === currentUser.email || data.senderId === currentUser.userId);
 
+          // Row Container
+          const row = document.createElement('div');
+          row.className = 'msg-swipe-row';
+          row.style.justifyContent = isMe ? 'flex-end' : 'flex-start';
+
+          // Reply Icon behind bubble
+          const replyIcon = document.createElement('div');
+          replyIcon.className = 'swipe-reply-icon';
+          replyIcon.innerHTML = '<i class="fa-solid fa-reply"></i>';
+          row.appendChild(replyIcon);
+
+          // Bubble Wrapper
           const wrapper = document.createElement('div');
           wrapper.className = 'msg-wrapper';
-          wrapper.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
           wrapper.style.alignItems = isMe ? 'flex-end' : 'flex-start';
 
           const label = document.createElement('span');
@@ -973,6 +1016,7 @@
 
           wrapper.appendChild(bubble);
 
+          // Reactions
           if (data.reactions && Object.keys(data.reactions).length > 0) {
             let total = 0;
             let emojis = '';
@@ -990,42 +1034,92 @@
             }
           }
 
-          // Long press gesture
-          let pressTimer = null;
-          let touchMoved = false;
+          // 📲 SWIPE TO REPLY TOUCH LOGIC
+          let startX = 0;
+          let startY = 0;
+          let currentX = 0;
+          let isSwiping = false;
+          let longPressTimer = null;
 
-          wrapper.addEventListener('touchstart', () => {
-            touchMoved = false;
-            pressTimer = setTimeout(() => {
-              if (!touchMoved) {
+          wrapper.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            currentX = startX;
+            isSwiping = false;
+
+            // Long Press (open menu)
+            longPressTimer = setTimeout(() => {
+              if (!isSwiping) {
                 openInstaMenu(docId, data, isMe);
               }
-            }, 500);
+            }, 550);
           }, { passive: true });
 
-          wrapper.addEventListener('touchmove', () => {
-            touchMoved = true;
-            clearTimeout(pressTimer);
+          wrapper.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            const diffX = touch.clientX - startX;
+            const diffY = touch.clientY - startY;
+
+            // Horizontal Swipe Check
+            if (Math.abs(diffX) > Math.abs(diffY) && diffX > 10) {
+              isSwiping = true;
+              clearTimeout(longPressTimer);
+              currentX = touch.clientX;
+
+              const translateX = Math.min(diffX * 0.45, 70); // Friction
+              wrapper.style.transform = `translateX(${translateX}px)`;
+
+              if (translateX > 35) {
+                replyIcon.style.opacity = '1';
+                replyIcon.style.transform = 'scale(1)';
+              } else {
+                replyIcon.style.opacity = '0';
+                replyIcon.style.transform = 'scale(0.5)';
+              }
+            }
           }, { passive: true });
 
           wrapper.addEventListener('touchend', () => {
-            clearTimeout(pressTimer);
-          }, { passive: true });
+            clearTimeout(longPressTimer);
+            const diffX = currentX - startX;
 
+            if (diffX > 60) {
+              // Trigger Reply
+              if (navigator.vibrate) navigator.vibrate(35);
+              setReplyTarget(data.senderId, data.text);
+            }
+
+            // Reset Animation
+            wrapper.style.transform = 'translateX(0px)';
+            replyIcon.style.opacity = '0';
+            replyIcon.style.transform = 'scale(0.5)';
+          });
+
+          // Desktop right-click
           wrapper.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             openInstaMenu(docId, data, isMe);
           });
 
-          chatArea.appendChild(wrapper);
+          row.appendChild(wrapper);
+          chatArea.appendChild(row);
         });
 
-        // Sirf first time ya bottom par hone par auto-scroll down karein
         if (isInitialChatLoad || isUserNearBottom) {
           chatArea.scrollTop = chatArea.scrollHeight;
           isInitialChatLoad = false;
         }
       });
+    }
+
+    function setReplyTarget(senderId, text) {
+      activeReplyTarget = { senderId, text };
+      document.getElementById('replying-to-name').innerText = `Replying to ${senderId}`;
+      document.getElementById('replying-to-text').innerText = text;
+      document.getElementById('replying-bar').style.display = 'flex';
+      const input = document.getElementById('confession-input');
+      input.focus();
     }
 
     function openInstaMenu(docId, data, isMe) {
@@ -1049,6 +1143,12 @@
       document.getElementById('insta-menu-modal').style.display = 'none';
     };
 
+    window.triggerReplyFromModal = function() {
+      if (!selectedMsgData) return;
+      closeInstaMenu();
+      setReplyTarget(selectedMsgData.senderId, selectedMsgData.text);
+    };
+
     window.sendReaction = async function(emoji) {
       if (!selectedMsgData || !currentUser) return;
       closeInstaMenu();
@@ -1069,21 +1169,6 @@
           });
         }
       } catch (e) {}
-    };
-
-    window.triggerReply = function() {
-      if (!selectedMsgData) return;
-      closeInstaMenu();
-
-      activeReplyTarget = {
-        senderId: selectedMsgData.senderId,
-        text: selectedMsgData.text
-      };
-
-      document.getElementById('replying-to-name').innerText = `Replying to ${selectedMsgData.senderId}`;
-      document.getElementById('replying-to-text').innerText = selectedMsgData.text;
-      document.getElementById('replying-bar').style.display = 'flex';
-      document.getElementById('confession-input').focus();
     };
 
     window.cancelReply = function() {
@@ -1127,7 +1212,7 @@
       try {
         if (updatedReports.length >= 5) {
           await deleteDoc(docRef);
-          alert("Yeh confession 5 reports hone par community guidelines ke mutabiq delete kar diya gaya hai.");
+          alert("Yeh confession 5 reports hone par delete kar diya gaya hai.");
         } else {
           await updateDoc(docRef, {
             reportedBy: arrayUnion(currentUser.email)
@@ -1145,7 +1230,7 @@
       if (!text) return;
 
       const senderId = currentUser ? currentUser.userId : "User #1";
-      const senderEmail = currentUser ? currentUser.email : activeEmail;
+      const senderEmail = currentUser ? currentUser.email : authUser.email;
       input.value = '';
 
       const confessionData = {
@@ -1158,7 +1243,7 @@
         reportedBy: []
       };
 
-      cancelReply();
+      window.cancelReply();
 
       try {
         await addDoc(collection(db, "confessions"), confessionData);
@@ -1177,9 +1262,9 @@
       if (presenceHeartbeat) clearInterval(presenceHeartbeat);
       if (unsubscribeChat) unsubscribeChat();
       if (unsubscribePresence) unsubscribePresence();
+      await signOut(auth);
       currentUser = null;
-      activeEmail = '';
-      localStorage.removeItem('dcp_last_active_email');
+      authUser = null;
       closeModal('setting-modal');
       showScreen(1);
     };
